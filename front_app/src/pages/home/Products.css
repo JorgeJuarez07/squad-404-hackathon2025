@@ -1,0 +1,250 @@
+/* src/home/Products.css - Código CSS Completo y Final */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  /* Paleta de colores orgánicos y cálidos */
+  --color-fondo-principal: #F7F5F2; /* Un blanco roto, suave */
+  --color-fondo-tarjeta: #FFFFFF;
+  --color-verde-hoja: #344E41;
+  --color-verde-acento: #A3B18A;
+  --color-terracota: #B76939;
+  --color-texto-principal: #333333;
+  --color-texto-secundario: #666666;
+  --color-sombra: rgba(0, 0, 0, 0.08);
+
+  /* Colores para la barra de navegación */
+  --nav-bg: #1A1A1A; /* Fondo casi negro para la barra */
+  --nav-text: #E0E0E0; /* Texto gris claro para los enlaces */
+  --nav-accent: #F8B12F; /* Amarillo maíz para el acento del logo */
+  --nav-border: #E0E0E0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor Principal de la Página */
+.products-page-container {
+  padding-top: 100px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: var(--color-fondo-principal);
+  color: var(--color-texto-principal);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Barra de Navegación Fija y Organizada */
+.page-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: var(--nav-bg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilo del Logo "AgroMarket" */
+.agromarket-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2em;
+  font-weight: 700;
+  color: var(--nav-accent);
+}
+
+.logo-icon {
+  font-size: 1.2em;
+  margin-right: 8px;
+  color: var(--nav-accent);
+}
+
+/* **Corrección para los enlaces de navegación** */
+.nav-links {
+  display: flex;
+  align-items: center;
+  /* Eliminamos el 'gap' y usamos margin para un control más preciso */
+}
+
+.nav-item {
+  color: var(--nav-text);
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+  font-weight: 500;
+  margin-left: 15px; /* Controlamos el espacio con un margen izquierdo */
+}
+
+.nav-item:first-child {
+  margin-left: 0; /* Aseguramos que el primer elemento no tenga margen */
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cart-button, .logout-button {
+  border-color: var(--nav-text);
+  background-color: transparent;
+}
+
+.cart-button:hover, .logout-button:hover {
+  background-color: var(--nav-text);
+  color: var(--nav-bg);
+}
+
+/* Títulos y Subtítulos de la Página */
+.products-main-title {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 3em;
+  font-weight: 700;
+  color: var(--color-verde-hoja);
+  margin-bottom: 10px;
+}
+
+.products-subtitle {
+  text-align: center;
+  font-size: 1.1em;
+  color: var(--color-texto-secundario);
+  margin-bottom: 60px;
+}
+
+/* Grid de Productos */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Tarjetas de Producto */
+.product-card {
+  background: var(--color-fondo-tarjeta);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 20px var(--color-sombra);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Etiquetas de Envío y Recolección */
+.product-tag {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 0.8em;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  color: var(--color-fondo-tarjeta);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tag-domicilio {
+  background-color: var(--color-verde-hoja);
+}
+
+.tag-tienda {
+  background-color: var(--color-terracota);
+}
+
+/* Área de Imagen de la Tarjeta */
+.product-image-area {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  color: var(--color-fondo-tarjeta);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Colores de Fondo Dinámicos para las Imágenes */
+.product-bg-1 { background-color: #A3B18A; } 
+.product-bg-2 { background-color: #588157; }
+.product-bg-3 { background-color: #C14953; }
+.product-bg-4 { background-color: #F8B12F; }
+.product-bg-5 { background-color: #B26939; }
+.product-bg-6 { background-color: #344E41; }
+
+
+/* Contenido de la Tarjeta */
+.product-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--color-verde-hoja);
+}
+
+.product-description {
+  font-size: 0.9em;
+  color: var(--color-texto-secundario);
+  line-height: 1.5;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+/* Botón de Añadir al Carrito */
+.add-to-cart-button {
+  background-color: var(--color-verde-hoja);
+  color: var(--color-fondo-tarjeta);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-to-cart-button:hover {
+  background-color: var(--color-verde-acento);
+}
+
+/* Diseño Responsivo para Móviles */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 20px;
+  }
+  .nav-links {
+    margin-top: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .products-page-container {
+    padding-top: 150px;
+  }
+  .products-main-title {
+    font-size: 2.2em;
+  }
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
