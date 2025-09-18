@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './singup.css'; 
 
-const SingupPage: React.FC = () => {
+const SingupPage  = () => {
       const navigate = useNavigate();
   // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({

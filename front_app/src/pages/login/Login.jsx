@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';  // Asegúrate de que tu archivo CSS esté correctamente importado.
-import logoAgroMarket from '../../resources/Untitled-removebg-preview.png';
+import logoAgroMarket from '../../resources/Logo.png';
 
 
-const WelcomePage: React.FC = () => {
+const WelcomePage = () => {
   const navigate = useNavigate();
 
   return (
