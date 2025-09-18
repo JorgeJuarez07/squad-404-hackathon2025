@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Home from "./home/Home";
-import Login from "./login/Login";
-import Callback from "./login/Callback";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import Callback from "./pages/login/Callback";
 
 const App = () => {
   return (
