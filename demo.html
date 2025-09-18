@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroMarket App</title>
+    <!-- Incluye Tailwind CSS para un diseño moderno y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        /* Oculta los formularios y las páginas por defecto */
+        #login-form, #signup-form, #home-page, #chat-page, #cart-page, #my-products-page, #chat-conversation-page {
+            display: none;
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #161a1b;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+        /* Estilos para el carrito de compras */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+        .cart-item-info {
+            flex-grow: 1;
+        }
+        /* Estilos para los mensajes de chat */
+        .my-message {
+            background-color: #34d399; /* Verde de Tailwind */
+            color: #161a1b;
+            align-self: flex-end;
+            border-radius: 1rem 1rem 0 1rem;
+        }
+        .other-message {
+            background-color: #2d3436; /* Un color oscuro para el remitente */
+            color: white;
+            align-self: flex-start;
+            border-radius: 1rem 1rem 1rem 0;
+        }
+        .system-message {
+            background-color: #2c525f;
+            color: #fff;
+            align-self: center;
+            text-align: center;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+        .offer-message {
+            background-color: #0b3d22;
+            color: white;
+            align-self: flex-end;
+            border-radius: 1rem 1rem 0 1rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6 flex items-center justify-center bg-gradient-to-br from-gray-900 via-green-950 to-emerald-950 text-white">
+
+    <!-- Contenedor principal para centrar el contenido -->
+    <div class="relative z-10 w-full max-w-4xl">
+        <!-- Sección de Bienvenida -->
+        <div id="welcome-screen" class="bg-white/10 backdrop-blur-md p-10 rounded-3xl shadow-2xl text-center w-full transform transition-all duration-500 hover:scale-105">
+            <!-- Título de la aplicación con ícono -->
+            <div class="flex items-center justify-center mb-4">
+                <span class="text-4xl mr-3 transform rotate-12 animate-pulse transition-all duration-500 text-green-400">🌾</span>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-white">AgroMarket</h1>
+            </div>
+            <p class="text-lg sm:text-xl text-white mb-8">Bienvenido a la plataforma que conecta la cosecha con tu comunidad.</p>
+            
+            <!-- Contenedor para los botones -->
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <!-- Botón de Login -->
+                <button id="loginButton" class="w-full bg-white text-green-600 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-100 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75">
+                    Login
+                </button>
+                <!-- Botón de Registro -->
+                <button id="signupButton" class="w-full bg-transparent text-white font-bold py-3 px-6 rounded-full border-2 border-white hover:bg-white hover:text-green-600 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-75">
+                    Registrarse
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección del Formulario de Registro -->
+        <div id="signup-form" class="bg-white/10 backdrop-blur-md p-6 sm:p-10 rounded-3xl shadow-2xl max-w-sm w-full mx-auto">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white text-center mb-6">Crear Cuenta</h2>
+            
+            <form id="userSignupForm" class="space-y-4">
+                <div>
+                    <label for="givenName" class="block text-white font-semibold mb-2 text-sm">Nombre</label>
+                    <input type="text" id="givenName" name="givenName" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="familyName" class="block text-white font-semibold mb-2 text-sm">Apellido</label>
+                    <input type="text" id="familyName" name="familyName" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="userName" class="block text-white font-semibold mb-2 text-sm">Nombre de Usuario</label>
+                    <input type="text" id="userName" name="userName" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="email" class="block text-white font-semibold mb-2 text-sm">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="phone" class="block text-white font-semibold mb-2 text-sm">Teléfono</label>
+                    <input type="tel" id="phone" name="phone"
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="password" class="block text-white font-semibold mb-2 text-sm">Contraseña</label>
+                    <input type="password" id="password" name="password" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                
+                <div id="signupStatusMessage" class="text-center text-sm font-bold mt-4 hidden"></div>
+
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75 text-sm">
+                    Crear Usuario
+                </button>
+            </form>
+
+            <p class="text-center text-white mt-4 text-xs sm:text-sm">
+                ¿Ya tienes una cuenta? 
+                <a href="#" id="gotoLoginLink" class="font-bold underline hover:text-green-200 transition duration-300">Login</a>
+            </p>
+
+            <button id="backFromSignupButton" class="w-full mt-4 bg-transparent text-white font-bold py-3 px-6 rounded-full border-2 border-white hover:bg-white hover:text-green-600 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-75 text-sm">
+                Volver
+            </button>
+        </div>
+
+        <!-- Sección del Formulario de Login -->
+        <div id="login-form" class="bg-white/10 backdrop-blur-md p-6 sm:p-10 rounded-3xl shadow-2xl max-w-sm w-full mx-auto">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white text-center mb-6">Iniciar Sesión</h2>
+            <form id="userLoginForm" class="space-y-4">
+                <div>
+                    <label for="loginUser" class="block text-white font-semibold mb-2 text-sm">Nombre de usuario o Email</label>
+                    <input type="text" id="loginUser" name="loginUser" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="loginPassword" class="block text-white font-semibold mb-2 text-sm">Contraseña</label>
+                    <input type="password" id="loginPassword" name="loginPassword" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                
+                <div id="loginStatusMessage" class="text-center text-sm font-bold mt-4 hidden"></div>
+                
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75 text-sm">
+                    Iniciar Sesión
+                </button>
+            </form>
+            <p class="text-center text-white mt-4 text-xs sm:text-sm">
+                ¿No tienes una cuenta? 
+                <a href="#" id="gotoSignupLink" class="font-bold underline hover:text-green-200 transition duration-300">Registrarse</a>
+            </p>
+            <button id="backFromLoginButton" class="w-full mt-4 bg-transparent text-white font-bold py-3 px-6 rounded-full border-2 border-white hover:bg-white hover:text-green-600 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-75 text-sm">
+                Volver
+            </button>
+        </div>
+
+        <!-- Sección de la página de inicio (Home) -->
+        <div id="home-page" class="w-full">
+            <header class="flex flex-col sm:flex-row justify-between items-center py-4 mb-8 text-center sm:text-left">
+                <div class="flex items-center mb-4 sm:mb-0">
+                    <span class="text-2xl sm:text-3xl mr-3 text-green-400">🌾</span>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold">AgroMarket</h1>
+                </div>
+                <nav class="flex flex-wrap justify-center sm:justify-end items-center space-x-2 sm:space-x-4">
+                    <a href="#" id="goToMyProductsButton" class="text-white hover:text-green-400 transition duration-300 text-sm sm:text-base">Mis Productos</a>
+                    <a href="#" id="goToChatButton" class="px-3 py-1 sm:px-4 sm:py-2 bg-transparent text-white border border-white rounded-full hover:bg-white hover:text-green-600 transition duration-300 text-sm sm:text-base">Chats</a>
+                    <a href="#" id="goToCartButton" class="px-3 py-1 sm:px-4 sm:py-2 bg-transparent text-white border border-white rounded-full hover:bg-white hover:text-green-600 transition duration-300 text-sm sm:text-base">🛒 Carrito</a>
+                    <a href="#" id="logoutButton" class="px-3 py-1 sm:px-4 sm:py-2 bg-transparent text-white border border-white rounded-full hover:bg-white hover:text-green-600 transition duration-300 text-sm sm:text-base">Cerrar Sesión</a>
+                </nav>
+            </header>
+            <main class="container mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-8 text-center text-white">Productos Disponibles</h2>
+                
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Las tarjetas de producto se generarán aquí con JavaScript -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Sección de Mis Productos (Dashboard del Vendedor) -->
+        <div id="my-products-page" class="w-full">
+            <header class="flex flex-col sm:flex-row items-center justify-between py-4 mb-8 text-center sm:text-left">
+                <button id="backFromMyProductsButton" class="text-green-400 hover:text-white transition duration-300 text-lg sm:text-xl mb-4 sm:mb-0">
+                    &larr; Volver
+                </button>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">Mis Productos</h2>
+                <button id="addNewProductButton" class="px-4 py-2 bg-green-600 text-white rounded-full font-bold shadow-lg hover:bg-green-700 transition duration-300 transform hover:scale-105 focus:outline-none text-sm">
+                    + Agregar Producto
+                </button>
+            </header>
+            <main class="container mx-auto">
+                <!-- Sección de estadísticas -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg text-center">
+                        <h4 class="text-sm font-semibold text-white/80">Total de Ventas</h4>
+                        <p id="totalSales" class="text-4xl font-bold text-green-400 mt-2">$0.00</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg text-center">
+                        <h4 class="text-sm font-semibold text-white/80">Productos Vendidos</h4>
+                        <p id="totalQuantity" class="text-4xl font-bold text-green-400 mt-2">0</p>
+                    </div>
+                </div>
+                
+                <h3 class="text-2xl font-bold mb-4 text-white">Mi Catálogo</h3>
+                <div id="my-products-list" class="space-y-4">
+                    <!-- La lista de productos del usuario se renderizará aquí -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Sección de la lista de Chats -->
+        <div id="chat-page" class="w-full max-w-lg mx-auto p-4 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl">
+            <header class="flex items-center justify-between mb-6">
+                <button id="backFromChatButton" class="text-green-400 hover:text-white transition duration-300 text-lg">
+                    &larr; Volver
+                </button>
+                <h2 class="text-3xl font-bold text-white">Chats</h2>
+            </header>
+            <div id="chat-list" class="space-y-4">
+                <!-- Los chats se generarán aquí con JavaScript -->
+            </div>
+        </div>
+
+        <!-- Sección de la Conversación de Chat -->
+        <div id="chat-conversation-page" class="w-full max-w-lg mx-auto p-4 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col h-[70vh]">
+            <header class="flex items-center justify-between mb-6 pb-4 border-b border-white/20">
+                <div class="flex items-center">
+                    <button id="backFromConversationButton" class="text-green-400 hover:text-white transition duration-300 text-lg mr-4">
+                        &larr;
+                    </button>
+                    <h2 id="chat-contact-name" class="text-xl sm:text-3xl font-bold text-white"></h2>
+                </div>
+            </header>
+            <div id="message-list" class="flex-grow space-y-4 overflow-y-auto pr-2">
+                <!-- Los mensajes se cargarán aquí -->
+            </div>
+            <form id="message-form" class="mt-4 flex space-x-2">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje..." class="flex-grow px-4 py-3 rounded-full bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-green-400 text-sm">
+                <button type="submit" class="bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                    </svg>
+                </button>
+                <button id="send-offer-button" type="button" class="bg-green-800 text-white text-xs sm:text-sm px-4 rounded-full shadow-lg hover:bg-green-900 transition duration-300 hidden">
+                    Enviar Oferta
+                </button>
+            </form>
+        </div>
+
+        <!-- Sección del Carrito de Compras -->
+        <div id="cart-page" class="w-full max-w-lg mx-auto p-4 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl">
+            <header class="flex items-center justify-between mb-6">
+                <button id="backFromCartButton" class="text-green-400 hover:text-white transition duration-300 text-lg">
+                    &larr; Volver
+                </button>
+                <h2 class="text-3xl font-bold text-white">Mi Carrito</h2>
+            </header>
+            <div id="cart-list" class="space-y-4 mb-6">
+                <!-- Los productos del carrito se generarán aquí -->
+            </div>
+            <div id="cart-summary" class="text-right font-bold text-lg mb-6">
+                Total: <span id="cart-total">$0.00</span>
+            </div>
+            <button id="checkoutButton" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75">
+                Proceder al Pago
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar los detalles del producto -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content relative text-white max-w-lg w-full">
+            <button id="close-modal-button" class="absolute top-4 right-4 text-white text-3xl leading-none">
+                &times;
+            </button>
+            <img id="modal-image" class="rounded-lg mb-4 product-image" src="" alt="">
+            <div class="p-4">
+                <h3 id="modal-title" class="text-3xl font-bold mb-2 text-green-400"></h3>
+                <p id="modal-description" class="text-white/80 mb-4"></p>
+                <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end" id="modal-actions">
+                    <!-- Acciones (comprar/contactar) se generan dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para el proceso de pago ficticio -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content relative text-white max-w-sm w-full">
+            <button id="close-payment-modal-button" class="absolute top-4 right-4 text-white text-3xl leading-none">
+                &times;
+            </button>
+            <h3 class="text-xl sm:text-3xl font-bold mb-6 text-center text-green-400">Proceso de Pago</h3>
+            <form id="payment-form" class="space-y-4">
+                <div>
+                    <label for="cardName" class="block text-white font-semibold mb-2 text-sm">Nombre en la Tarjeta</label>
+                    <input type="text" id="cardName" name="cardName" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="cardNumber" class="block text-white font-semibold mb-2 text-sm">Número de Tarjeta</label>
+                    <input type="text" id="cardNumber" name="cardNumber" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div class="flex space-x-4">
+                    <div class="w-1/2">
+                        <label for="cardExpiry" class="block text-white font-semibold mb-2 text-sm">Vencimiento (MM/AA)</label>
+                        <input type="text" id="cardExpiry" name="cardExpiry" required
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                    </div>
+                    <div class="w-1/2">
+                        <label for="cardCvv" class="block text-white font-semibold mb-2 text-sm">CVV</label>
+                        <input type="text" id="cardCvv" name="cardCvv" required
+                            class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300">
+                    Pagar
+                </button>
+            </form>
+            <div id="payment-message" class="text-center mt-4 hidden"></div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar un nuevo producto -->
+    <div id="add-product-modal" class="modal">
+        <div class="modal-content relative text-white max-w-sm w-full">
+            <button id="close-add-product-modal-button" class="absolute top-4 right-4 text-white text-3xl leading-none">
+                &times;
+            </button>
+            <h3 class="text-xl sm:text-3xl font-bold mb-6 text-center text-green-400">Nuevo Producto</h3>
+            <form id="add-product-form" class="space-y-4">
+                <div>
+                    <label for="newProductName" class="block text-white font-semibold mb-2 text-sm">Nombre del Producto</label>
+                    <input type="text" id="newProductName" name="newProductName" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="newProductDesc" class="block text-white font-semibold mb-2 text-sm">Descripción</label>
+                    <textarea id="newProductDesc" name="newProductDesc" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm"></textarea>
+                </div>
+                <div>
+                    <label for="newProductPrice" class="block text-white font-semibold mb-2 text-sm">Precio</label>
+                    <input type="number" id="newProductPrice" name="newProductPrice" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm" step="0.01" min="0">
+                </div>
+                <div>
+                    <label for="newProductUnit" class="block text-white font-semibold mb-2 text-sm">Unidad (ej: kg, pieza)</label>
+                    <input type="text" id="newProductUnit" name="newProductUnit" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="newProductImage" class="block text-white font-semibold mb-2 text-sm">URL de la imagen</label>
+                    <input type="url" id="newProductImage" name="newProductImage" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                </div>
+                <div>
+                    <label for="newProductDelivery" class="block text-white font-semibold mb-2 text-sm">Opción de entrega</label>
+                    <select id="newProductDelivery" name="newProductDelivery" required
+                        class="w-full px-4 py-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white text-sm">
+                        <option value="Envío a domicilio">Envío a domicilio</option>
+                        <option value="Recoger en tienda">Recoger en tienda</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300">
+                    Guardar Producto
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const homePage = document.getElementById('home-page');
+        const chatPage = document.getElementById('chat-page');
+        const cartPage = document.getElementById('cart-page');
+        const myProductsPage = document.getElementById('my-products-page');
+        const chatConversationPage = document.getElementById('chat-conversation-page');
+        const signupStatusMessage = document.getElementById('signupStatusMessage');
+        const loginStatusMessage = document.getElementById('loginStatusMessage');
+        const productGrid = document.getElementById('product-grid');
+        const productModal = document.getElementById('product-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const modalActions = document.getElementById('modal-actions');
+        const chatList = document.getElementById('chat-list');
+        const chatContactName = document.getElementById('chat-contact-name');
+        const messageList = document.getElementById('message-list');
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+        const cartList = document.getElementById('cart-list');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutButton = document.getElementById('checkoutButton');
+        const paymentModal = document.getElementById('payment-modal');
+        const closePaymentModalButton = document.getElementById('close-payment-modal-button');
+        const paymentForm = document.getElementById('payment-form');
+        const paymentMessage = document.getElementById('payment-message');
+        const addNewProductButton = document.getElementById('addNewProductButton');
+        const addProductModal = document.getElementById('add-product-modal');
+        const closeAddProductModalButton = document.getElementById('close-add-product-modal-button');
+        const addProductForm = document.getElementById('add-product-form');
+        const myProductsList = document.getElementById('my-products-list');
+        const totalSalesElement = document.getElementById('totalSales');
+        const totalQuantityElement = document.getElementById('totalQuantity');
+        const sendOfferButton = document.getElementById('send-offer-button');
+
+        const cart = [];
+        let currentChatId = null;
+
+        // Datos de los productos (simulados)
+        const products = [
+            { id: 1, name: "Tomates Orgánicos", description: "Cosecha fresca del día, perfectos para ensaladas y salsas.", price: 2.50, unit: "kg", imageUrl: "https://placehold.co/400x300/a3e635/161a1b?text=Tomates", deliveryOption: "Envío a domicilio" },
+            { id: 2, name: "Aguacates Hass", description: "Aguacates cremosos, listos para hacer un delicioso guacamole.", price: 5.00, unit: "kg", imageUrl: "https://placehold.co/400x300/50c878/161a1b?text=Aguacates", deliveryOption: "Recoger en tienda", sellerId: 1 },
+            { id: 3, name: "Fresas Frescas", description: "Fresas dulces y jugosas, cultivadas con métodos tradicionales.", price: 4.20, unit: "kg", imageUrl: "https://placehold.co/400x300/f87171/161a1b?text=Fresas", deliveryOption: "Envío a domicilio" },
+            { id: 4, name: "Maíz Orgánico", description: "Mazorcas de maíz tierno, ideales para asar o hervir.", price: 1.80, unit: "kg", imageUrl: "https://placehold.co/400x300/fde047/161a1b?text=Maiz", deliveryOption: "Recoger en tienda", sellerId: 2 },
+            { id: 5, name: "Zanahorias Frescas", description: "Zanahorias de la huerta, crujientes y dulces.", price: 1.20, unit: "kg", imageUrl: "https://placehold.co/400x300/f97316/161a1b?text=Zanahorias", deliveryOption: "Envío a domicilio" },
+            { id: 6, name: "Lechugas Orgánicas", description: "Hojas frescas y crujientes, cultivadas sin pesticidas.", price: 0.90, unit: "pieza", imageUrl: "https://placehold.co/400x300/4ade80/161a1b?text=Lechugas", deliveryOption: "Envío a domicilio" }
+        ];
+
+        // Datos de productos del usuario (simulados)
+        let myProducts = [
+            { id: 7, name: "Manzanas", description: "Manzanas rojas dulces y crujientes.", price: 3.50, unit: "kg", imageUrl: "https://placehold.co/400x300/ef4444/161a1b?text=Manzanas", deliveryOption: "Envío a domicilio", sold: 5, revenue: 17.50, sellerId: 3 },
+            { id: 8, name: "Pimientos", description: "Pimientos frescos de varios colores, ideales para cocinar.", price: 2.00, unit: "kg", imageUrl: "https://placehold.co/400x300/10b981/161a1b?text=Pimientos", deliveryOption: "Recoger en tienda", sold: 10, revenue: 20.00, sellerId: 4 }
+        ];
+
+        // Datos de chats y mensajes simulados
+        const chats = [
+            { id: 1, contactName: "Juan el Agricultor", lastMessage: "Claro, los tomates están listos para la entrega.", time: "10:30 AM", role: "client", sellerId: 1 },
+            { id: 2, contactName: "María la Compradora", lastMessage: "Me interesa comprar 5 kg de maíz. ¿A qué hora puedo pasar?", time: "Ayer", role: "seller", sellerId: 2 },
+            { id: 3, contactName: "Distribuidora Fresh", lastMessage: "Tenemos un pedido grande para ti. Te envié los detalles.", time: "Hace 2 días", role: "seller", sellerId: 3 },
+            { id: 4, contactName: "Vendedor de Maíz", lastMessage: "Te he enviado la oferta de compra.", time: "Ahora", role: "client", sellerId: 4 }
+        ];
+
+        const chatHistory = {
+            1: [
+                { sender: 'other', text: 'Hola, ¿aún tienes tomates orgánicos disponibles?' },
+                { sender: 'my', text: '¡Sí! ¿Cuántos kilos necesitas?' }
+            ],
+            2: [
+                { sender: 'other', text: 'Hola, ¿el maíz es dulce o es para tortillas?' },
+                { sender: 'my', text: 'Es maíz criollo, ideal para tortillas y tamales. Es muy sabroso.' }
+            ],
+            3: [
+                { sender: 'other', text: 'Necesitamos 100 kg de pimientos para el jueves. ¿Será posible?' },
+                { sender: 'my', text: 'Sí, podemos tenerlos listos. Te confirmo la hora de entrega en un momento.' }
+            ],
+            4: [
+                { sender: 'my', text: 'Hola, me interesan las manzanas. ¿A qué precio están?' },
+                { sender: 'other', type: 'offer', productName: "Manzanas", productUnit: "kg", quantity: 3, total: 10.50, status: 'pending' }
+            ]
+        };
+
+        // Función para mostrar una sección y ocultar las demás
+        function showSection(section) {
+            welcomeScreen.style.display = 'none';
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'none';
+            homePage.style.display = 'none';
+            chatPage.style.display = 'none';
+            chatConversationPage.style.display = 'none';
+            cartPage.style.display = 'none';
+            myProductsPage.style.display = 'none';
+            productModal.style.display = 'none';
+            paymentModal.style.display = 'none';
+            addProductModal.style.display = 'none';
+            
+            section.style.display = 'block';
+
+            // Si la sección es la página de inicio, generamos los productos
+            if (section === homePage) {
+                renderProducts();
+            } else if (section === chatPage) {
+                renderChats();
+            } else if (section === cartPage) {
+                renderCart();
+            } else if (section === myProductsPage) {
+                renderMyProducts();
+            }
+        }
+
+        // Función para generar dinámicamente las tarjetas de producto
+        function renderProducts() {
+            productGrid.innerHTML = ''; // Limpiar el contenedor antes de renderizar
+            const allProducts = [...products, ...myProducts]; // Combina los productos del marketplace y del usuario
+            allProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('bg-white/10', 'backdrop-blur-md', 'p-6', 'rounded-2xl', 'shadow-lg', 'transform', 'transition-all', 'duration-300', 'hover:scale-105', 'cursor-pointer', 'relative');
+                productCard.dataset.productId = product.id; // Guarda el ID para identificar el producto
+
+                let deliveryBadge = '';
+                if (product.deliveryOption) {
+                    const badgeColor = product.deliveryOption === "Envío a domicilio" ? "bg-blue-500" : "bg-yellow-500";
+                    deliveryBadge = `<span class="absolute top-4 right-4 text-xs font-semibold px-2 py-1 rounded-full ${badgeColor} text-white">${product.deliveryOption}</span>`;
+                }
+
+                productCard.innerHTML = `
+                    ${deliveryBadge}
+                    <img src="${product.imageUrl}" alt="${product.name}" class="rounded-lg mb-4 product-image">
+                    <h3 class="text-lg sm:text-2xl font-semibold mb-2 text-green-400">${product.name}</h3>
+                    <p class="text-xs sm:text-sm text-white/80 mb-4">${product.description}</p>
+                `;
+                productGrid.appendChild(productCard);
+
+                // Agregar el evento click a cada tarjeta
+                productCard.addEventListener('click', () => {
+                    showProductDetails(product.id);
+                });
+            });
+        }
+
+        // Función para generar dinámicamente la lista de los productos del usuario
+        function renderMyProducts() {
+            myProductsList.innerHTML = '';
+            let totalSales = 0;
+            let totalQuantity = 0;
+
+            if (myProducts.length === 0) {
+                myProductsList.innerHTML = '<p class="text-center text-white/60">Aún no tienes productos. ¡Agrega uno!</p>';
+            } else {
+                myProducts.forEach(product => {
+                    totalSales += product.revenue || 0;
+                    totalQuantity += product.sold || 0;
+
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('flex', 'flex-col sm:flex-row items-center sm:space-x-4', 'p-4', 'bg-white/10', 'rounded-xl', 'cursor-pointer', 'transition-all', 'duration-200', 'hover:bg-white/20', 'text-center', 'sm:text-left');
+                    productItem.innerHTML = `
+                        <img src="${product.imageUrl}" alt="${product.name}" class="w-24 h-24 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0 mb-2 sm:mb-0">
+                        <div class="flex-grow">
+                            <span class="font-bold text-lg">${product.name}</span>
+                            <p class="text-sm text-white/80">$${product.price.toFixed(2)} / ${product.unit}</p>
+                        </div>
+                        <div class="text-right mt-2 sm:mt-0">
+                            <p class="text-sm font-semibold">Vendidos: ${product.sold || 0}</p>
+                            <p class="text-sm font-semibold">Ingresos: $${(product.revenue || 0).toFixed(2)}</p>
+                        </div>
+                    `;
+                    myProductsList.appendChild(productItem);
+                });
+            }
+
+            // Actualizar las estadísticas
+            totalSalesElement.textContent = `$${totalSales.toFixed(2)}`;
+            totalQuantityElement.textContent = totalQuantity;
+        }
+
+        // Función para generar dinámicamente la lista de chats
+        function renderChats() {
+            chatList.innerHTML = '';
+            chats.forEach(chat => {
+                const chatItem = document.createElement('div');
+                chatItem.classList.add('flex', 'items-center', 'space-x-4', 'p-4', 'bg-white/10', 'rounded-xl', 'cursor-pointer', 'transition-all', 'duration-200', 'hover:bg-white/20');
+                chatItem.dataset.chatId = chat.id;
+                chatItem.innerHTML = `
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex-shrink-0 flex items-center justify-center text-lg font-bold">${chat.contactName.charAt(0)}</div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold">${chat.contactName}</span>
+                            <span class="text-xs text-white/60">${chat.time}</span>
+                        </div>
+                        <p class="text-sm text-white/80 truncate">${chat.lastMessage}</p>
+                    </div>
+                `;
+                chatList.appendChild(chatItem);
+
+                chatItem.addEventListener('click', () => {
+                    currentChatId = chat.id;
+                    chatContactName.textContent = chat.contactName;
+                    showSection(chatConversationPage);
+                    renderMessages(chat.id);
+                });
+            });
+        }
+        
+        // Función para renderizar los mensajes de un chat específico
+        function renderMessages(chatId) {
+            messageList.innerHTML = '';
+            const messages = chatHistory[chatId] || [];
+
+            messages.forEach(message => {
+                const messageBubble = document.createElement('div');
+                
+                if (message.type === 'offer') {
+                    // Mensaje de oferta (flujo de venta)
+                    const isClient = chats.find(c => c.id === chatId).role === 'client';
+                    
+                    messageBubble.classList.add('p-4', 'rounded-lg', 'max-w-[85%]', 'w-fit', 'flex', 'flex-col', 'space-y-2');
+                    if (isClient) {
+                         messageBubble.classList.add('other-message');
+                         messageBubble.classList.remove('my-message');
+                    } else {
+                         messageBubble.classList.add('offer-message');
+                         messageBubble.classList.remove('other-message');
+                    }
+
+                    let content = `
+                        <p class="font-bold text-lg">Oferta de Compra</p>
+                        <div class="text-sm">
+                            <p>Producto: ${message.productName}</p>
+                            <p>Cantidad: ${message.quantity} ${message.productUnit}</p>
+                            <p>Total: <span class="text-green-300 font-bold">$${message.total.toFixed(2)}</span></p>
+                        </div>
+                    `;
+                    if (message.status === 'pending') {
+                        content += `<button class="accept-offer-button w-full bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-md mt-2 hover:bg-green-700 transition duration-300">Aceptar</button>`;
+                    } else if (message.status === 'accepted') {
+                        content += `<p class="mt-2 text-xs text-center text-white/80">Oferta aceptada. Esperando confirmación de entrega del vendedor.</p>`;
+                    } else if (message.status === 'completed') {
+                        content += `<p class="mt-2 text-xs text-center text-green-300 font-bold">¡Venta completada!</p>`;
+                    }
+                    messageBubble.innerHTML = content;
+                    
+                    if (message.status === 'pending') {
+                        messageBubble.querySelector('.accept-offer-button').addEventListener('click', () => {
+                            message.status = 'accepted';
+                            const newSystemMessage = {
+                                sender: 'system',
+                                text: '¡Oferta aceptada! El vendedor ha sido notificado para la entrega.'
+                            };
+                            chatHistory[chatId].push(newSystemMessage);
+                            renderMessages(chatId);
+
+                            // Simulación de la confirmación del vendedor
+                            setTimeout(() => {
+                                message.status = 'completed';
+                                const finalSystemMessage = {
+                                    sender: 'system',
+                                    text: 'Venta confirmada por el vendedor. Transacción completada.'
+                                };
+                                chatHistory[chatId].push(finalSystemMessage);
+                                renderMessages(chatId);
+                            }, 3000);
+                        });
+                    }
+
+                } else {
+                    // Mensaje de texto normal
+                    messageBubble.classList.add('p-3', 'rounded-lg', 'max-w-[85%]', 'w-fit', 'flex', 'flex-col', 'space-y-1', message.sender === 'my' ? 'my-message' : 'other-message');
+                    messageBubble.innerHTML = `<p>${message.text}</p>`;
+                }
+                
+                // Agrega el mensaje al DOM
+                messageList.appendChild(messageBubble);
+            });
+            messageList.scrollTop = messageList.scrollHeight; // Desplazar al último mensaje
+
+            // Condicional para mostrar/ocultar el botón de enviar oferta
+            const currentChat = chats.find(c => c.id === chatId);
+            if (currentChat && currentChat.role === 'seller') {
+                sendOfferButton.classList.remove('hidden');
+            } else {
+                sendOfferButton.classList.add('hidden');
+            }
+        }
+
+        // Función para generar dinámicamente la lista del carrito
+        function renderCart() {
+            cartList.innerHTML = '';
+            let total = 0;
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p class="text-center text-white/60">Tu carrito está vacío.</p>';
+                checkoutButton.disabled = true;
+            } else {
+                checkoutButton.disabled = false;
+                cart.forEach((item, index) => {
+                    total += item.price * item.quantity;
+                    const cartItem = document.createElement('div');
+                    cartItem.classList.add('cart-item');
+                    cartItem.innerHTML = `
+                        <div class="cart-item-info">
+                            <h4 class="font-bold">${item.name}</h4>
+                            <p class="text-sm text-white/80">$${item.price.toFixed(2)} / ${item.unit} x ${item.quantity}</p>
+                        </div>
+                        <span class="font-bold">$${(item.price * item.quantity).toFixed(2)}</span>
+                        <button class="remove-from-cart ml-4 px-2 py-1 rounded-full bg-red-600 text-white text-xs hover:bg-red-700" data-index="${index}">Quitar</button>
+                    `;
+                    cartList.appendChild(cartItem);
+                });
+            }
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+
+            // Agregar evento para quitar productos del carrito
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const index = e.target.dataset.index;
+                    cart.splice(index, 1);
+                    renderCart();
+                });
+            });
+        }
+
+        // Función para mostrar los detalles del producto en el modal
+        function showProductDetails(productId) {
+            const allProducts = [...products, ...myProducts];
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            modalImage.src = product.imageUrl;
+            modalImage.alt = product.name;
+            modalTitle.textContent = product.name;
+            modalDescription.textContent = product.description;
+
+            modalActions.innerHTML = ''; // Limpia las acciones anteriores
+            
+            // Agrega el aviso de envío en el modal
+            let deliveryBadge = '';
+            if (product.deliveryOption) {
+                const badgeColor = product.deliveryOption === "Envío a domicilio" ? "bg-blue-500" : "bg-yellow-500";
+                deliveryBadge = `<span class="text-sm font-semibold px-3 py-1 rounded-full ${badgeColor} text-white mr-4">${product.deliveryOption}</span>`;
+            }
+
+            // Lógica condicional para mostrar el botón de contacto o la opción de compra
+            const canContact = product.deliveryOption === "Recoger en tienda";
+
+            if (canContact) {
+                modalActions.innerHTML = `
+                    ${deliveryBadge}
+                    <button id="contact-seller-button" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-green-700 transition duration-300">
+                        Contactar
+                    </button>
+                `;
+                // Añade el evento para el botón "Contactar"
+                document.getElementById('contact-seller-button').addEventListener('click', () => {
+                    // Buscar el chat correspondiente al vendedor del producto
+                    const chat = chats.find(c => c.sellerId === product.sellerId);
+                    if (chat) {
+                        currentChatId = chat.id;
+                        chatContactName.textContent = chat.contactName;
+                        showSection(chatConversationPage);
+                        renderMessages(chat.id);
+                        productModal.style.display = 'none'; // Cierra el modal
+                    } else {
+                        console.log("No se encontró un chat para este vendedor.");
+                    }
+                });
+            } else {
+                modalActions.innerHTML = `
+                    <div class="flex flex-col items-start w-full">
+                        <label for="quantity" class="text-sm font-semibold mb-2">Cantidad (${product.unit}):</label>
+                        <input type="number" id="quantity" value="1" min="1" class="w-24 bg-white/20 text-white p-2 rounded-lg">
+                    </div>
+                    <div class="flex flex-col items-end">
+                        ${deliveryBadge}
+                        <span class="text-2xl font-bold mb-2">$${product.price.toFixed(2)}</span>
+                        <button id="add-to-cart-button" class="bg-green-600 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-green-700 transition duration-300">
+                            Añadir al Carrito
+                        </button>
+                    </div>
+                `;
+                // Añade el evento para el botón "Comprar"
+                document.getElementById('add-to-cart-button').addEventListener('click', () => {
+                    const quantity = document.getElementById('quantity').value;
+                    const itemToAdd = { ...product, quantity: Number(quantity) };
+                    cart.push(itemToAdd);
+                    console.log(`Simulación: Añadiendo ${quantity} de ${product.name} al carrito.`);
+                    productModal.style.display = 'none'; // Cierra el modal después de agregar
+                });
+            }
+
+            productModal.style.display = 'flex'; // Usar flex para centrar
+        }
+
+        // Lógica de navegación
+        document.getElementById('loginButton').addEventListener('click', () => showSection(loginForm));
+        document.getElementById('signupButton').addEventListener('click', () => showSection(signupForm));
+        document.getElementById('backFromSignupButton').addEventListener('click', () => showSection(welcomeScreen));
+        document.getElementById('backFromLoginButton').addEventListener('click', () => showSection(welcomeScreen));
+        document.getElementById('gotoLoginLink').addEventListener('click', (e) => { e.preventDefault(); showSection(loginForm); });
+        document.getElementById('gotoSignupLink').addEventListener('click', (e) => { e.preventDefault(); showSection(signupForm); });
+        document.getElementById('logoutButton').addEventListener('click', (e) => { e.preventDefault(); showSection(welcomeScreen); });
+        closeModalButton.addEventListener('click', () => productModal.style.display = 'none');
+        document.getElementById('goToChatButton').addEventListener('click', () => showSection(chatPage));
+        document.getElementById('backFromChatButton').addEventListener('click', () => showSection(homePage));
+        document.getElementById('backFromConversationButton').addEventListener('click', () => showSection(chatPage));
+        document.getElementById('goToCartButton').addEventListener('click', () => showSection(cartPage));
+        document.getElementById('backFromCartButton').addEventListener('click', () => showSection(homePage));
+        document.getElementById('goToMyProductsButton').addEventListener('click', () => showSection(myProductsPage));
+        document.getElementById('backFromMyProductsButton').addEventListener('click', () => showSection(homePage));
+        checkoutButton.addEventListener('click', () => showSection(paymentModal));
+        closePaymentModalButton.addEventListener('click', () => paymentModal.style.display = 'none');
+
+        // Lógica de los modales de productos del usuario
+        addNewProductButton.addEventListener('click', () => addProductModal.style.display = 'flex');
+        closeAddProductModalButton.addEventListener('click', () => addProductModal.style.display = 'none');
+
+
+        // Manejar el envío del formulario de registro
+        document.getElementById('userSignupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const userData = Object.fromEntries(formData.entries());
+
+            if (Object.values(userData).some(value => value === '')) {
+                displayStatusMessage(signupStatusMessage, 'Por favor, completa todos los campos requeridos.', 'red');
+                return;
+            }
+
+            console.log("Datos del usuario para enviar a ZITADEL:", userData);
+            displayStatusMessage(signupStatusMessage, '¡Usuario registrado con éxito! Redirigiendo...', 'green');
+            
+            setTimeout(() => {
+                showSection(homePage);
+                e.target.reset();
+            }, 1500);
+        });
+
+        // Manejar el envío del formulario de login
+        document.getElementById('userLoginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const loginUser = document.getElementById('loginUser').value;
+            const loginPassword = document.getElementById('loginPassword').value;
+
+            if (loginUser && loginPassword) {
+                displayStatusMessage(loginStatusMessage, 'Inicio de sesión exitoso. Redirigiendo...', 'green');
+                setTimeout(() => {
+                    showSection(homePage);
+                    e.target.reset();
+                }, 1500);
+            } else {
+                displayStatusMessage(loginStatusMessage, 'Por favor, introduce tu usuario y contraseña.', 'red');
+            }
+        });
+
+        // Manejar el envío del formulario para agregar un nuevo producto
+        addProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const newProduct = {
+                id: myProducts.length > 0 ? Math.max(...myProducts.map(p => p.id)) + 1 : products.length + 1,
+                name: formData.get('newProductName'),
+                description: formData.get('newProductDesc'),
+                price: Number(formData.get('newProductPrice')),
+                unit: formData.get('newProductUnit'),
+                imageUrl: formData.get('newProductImage'),
+                deliveryOption: formData.get('newProductDelivery'),
+                sold: 0,
+                revenue: 0
+            };
+
+            myProducts.push(newProduct);
+            addProductModal.style.display = 'none';
+            e.target.reset();
+            renderMyProducts();
+            console.log("Nuevo producto agregado:", newProduct);
+        });
+
+        // Manejar el envío del formulario de pago
+        paymentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            paymentMessage.textContent = 'Procesando pago...';
+            paymentMessage.style.color = 'yellow';
+            paymentMessage.style.display = 'block';
+
+            setTimeout(() => {
+                cart.forEach(item => {
+                    const existingProduct = myProducts.find(p => p.id === item.id);
+                    if (existingProduct) {
+                        existingProduct.sold = (existingProduct.sold || 0) + item.quantity;
+                        existingProduct.revenue = (existingProduct.revenue || 0) + (item.price * item.quantity);
+                    }
+                });
+
+                cart.length = 0; // Vacía el carrito
+                paymentMessage.textContent = '¡Pago exitoso!';
+                paymentMessage.style.color = 'green';
+                
+                setTimeout(() => {
+                    paymentModal.style.display = 'none';
+                    showSection(homePage);
+                }, 1500);
+            }, 2000);
+        });
+
+        // Manejar el envío de mensajes en el chat
+        messageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (text) {
+                const newMessage = { sender: 'my', text };
+                chatHistory[currentChatId].push(newMessage);
+                renderMessages(currentChatId);
+                messageInput.value = '';
+                console.log(`Mensaje enviado: "${text}" en el chat ${currentChatId}`);
+            }
+        });
+        
+        // Manejar el envío de una oferta de compra
+        sendOfferButton.addEventListener('click', () => {
+            if (!currentChatId) {
+                console.log("Error: No hay un chat seleccionado para enviar la oferta.");
+                return;
+            }
+            
+            // Simulación de un producto para la oferta
+            const productForOffer = myProducts[0]; // Usamos el primer producto del usuario
+            if (!productForOffer) {
+                console.log("Error: No hay productos en tu catálogo para crear una oferta.");
+                return;
+            }
+            
+            const quantity = 5; // Cantidad simulada
+            const total = quantity * productForOffer.price;
+
+            const newOffer = {
+                type: 'offer',
+                sender: 'my',
+                productName: productForOffer.name,
+                productUnit: productForOffer.unit,
+                quantity: quantity,
+                total: total,
+                status: 'pending' // Estado inicial de la oferta
+            };
+            
+            chatHistory[currentChatId].push(newOffer);
+            renderMessages(currentChatId);
+            console.log("Oferta de compra enviada:", newOffer);
+        });
+
+
+        // Función para mostrar mensajes de estado
+        function displayStatusMessage(element, message, color) {
+            element.textContent = message;
+            element.style.color = color;
+            element.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
