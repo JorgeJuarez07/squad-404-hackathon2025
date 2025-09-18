@@ -1,6 +1,5 @@
-// src/home/Products.jsx
 import React from 'react';
-import './Products.css'; 
+import './Products.css';
 
 const productsData = [
   { id: 1, name: 'Tomates Orgánicos', description: 'Cosecha fresca del día, perfectos para ensaladas y salsas.', delivery: 'Envío a domicilio' },
@@ -11,23 +10,26 @@ const productsData = [
   { id: 6, name: 'Lechugas Orgánicas', description: 'Hojas frescas y crujientes, cultivadas sin pesticidas.', delivery: 'Envío a domicilio' },
 ];
 
-const Products = () => {
+const Products = ({ user, logout, onProfileClick }) => { // <-- Add 'onProfileClick' here
   return (
     <div className="products-page-container">
       <div className="page-header">
         <h1 className="agromarket-logo">
-          <span className="logo-icon"></span> {/* Aquí iría el ícono real si usas una librería */}
+          <span className="logo-icon"></span>
           <span className="logo-text">AgroMarket</span>
         </h1>
         <div className="nav-links">
-          {/* Aquí están los enlaces como en tu imagen */}
           <a href="#" className="nav-item">Mis Productos</a>
           <a href="#" className="nav-item">Chats</a>
-          <a href="#" className="nav-item cart-button">
-            <span className="icon">🛒</span> {/* Reemplaza con un ícono real si usas una librería */}
+          <a href="#" onClick={onProfileClick} className="nav-item">Mi Perfil</a>
+         <a href="#" className="nav-item cart-button">
+            <span className="icon">🛒</span>
             Carrito
           </a>
-          <a href="#" className="nav-item logout-button">Cerrar Sesión</a>
+          {/* Add the onClick event to the "Cerrar Sesión" button */}
+          <a href="#" className="nav-item logout-button" onClick={logout}>
+            Cerrar Sesión
+          </a>
         </div>
       </div>
 
@@ -41,7 +43,6 @@ const Products = () => {
               {product.delivery}
             </div>
             <div className={`product-image-area product-bg-${product.id}`}>
-              {/* Aquí irían las imágenes de los productos */}
             </div>
             <div className="product-info">
               <h3 className="product-name">{product.name}</h3>
@@ -54,5 +55,7 @@ const Products = () => {
     </div>
   );
 };
+
+
 
 export default Products;
