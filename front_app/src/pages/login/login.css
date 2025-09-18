@@ -1,0 +1,128 @@
+/* General - Estilos existentes */
+body {
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    background-color: #161a1b;
+    color: white;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#welcome-screen {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    transform: scale(1);
+    transition: all 0.3s ease-in-out;
+}
+
+#welcome-screen:hover {
+    transform: scale(1.05);
+}
+
+#welcome-screen .text-green-400 {
+    animation: pulse 0.8s infinite; /* Animación más suave */
+}
+
+/* ---------------------------------- */
+/* Estilos de la imagen del logo      */
+/* ---------------------------------- */
+
+/* El tamaño base de la imagen se controla con las clases de Tailwind w-12 h-12.
+   No es necesario añadirlo aquí a menos que quieras anularlo. */
+#welcome-screen img {
+    /* Transición suave para el cambio de tamaño */
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); } /* Pulso más sutil */
+    100% { transform: scale(1); }
+}
+
+button, a {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    margin-right: 2rem;
+}
+
+button:hover, a:hover {
+    transform: scale(1.05);
+}
+
+/* ---------------------------------- */
+/* Estilos Responsivos                */
+/* ---------------------------------- */
+
+@media screen and (max-width: 768px) {
+    /* Estilos para tabletas y dispositivos móviles */
+    #welcome-screen {
+        padding: 1.5rem;
+        max-width: 90%; /* Ocupa más del ancho de la pantalla en dispositivos pequeños */
+        border-radius: 1rem;
+    }
+
+    #welcome-screen:hover {
+        transform: none; /* Deshabilitar la animación de escala al pasar el mouse en móviles */
+    }
+
+    /* Ajustamos el tamaño del logo para tabletas */
+    #welcome-screen img {
+        width: 6rem; /* Equivalente a w-10 en Tailwind */
+        height: 6rem; /* Equivalente a h-10 en Tailwind */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Estilos para móviles pequeños */
+    body {
+        /* Permite que el contenido se desplace verticalmente si es necesario en pantallas muy pequeñas */
+        align-items: flex-start;
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+        height: auto;
+    }
+
+    #welcome-screen {
+        padding: 1rem;
+        max-width: 95%; /* Ocupa casi todo el ancho */
+        border-radius: 0.75rem;
+        box-shadow: none; /* Elimina la sombra para un look más limpio */
+        background-color: transparent; /* Fondo transparente */
+        backdrop-filter: none; /* Elimina el desenfoque */
+    }
+
+    button, a {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* Hacemos el logo más pequeño para móviles */
+    #welcome-screen img {
+        width: 8rem; /* Equivalente a w-8 en Tailwind */
+        height: 8rem; /* Equivalente a h-8 en Tailwind */
+    }
+
+    /* Opcional: para que los botones se vean mejor en pantallas muy pequeñas */
+    .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+

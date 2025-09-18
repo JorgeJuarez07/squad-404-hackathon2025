@@ -1,17 +1,39 @@
-const Login = () => {
-  const zitadelAuthUrl = `https://interle-jy3ptw.us1.zitadel.cloud/oauth/v2/authorize?client_id=338010317902660978&response_type=code&scope=openid%20profile%20email&redirect_uri=http://localhost:3000/callback`;
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './login.css';  // Asegúrate de que tu archivo CSS esté correctamente importado.
+import logoAgroMarket from '../../resources/Untitled-removebg-preview.png';
+
+
+const WelcomePage: React.FC = () => {
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl mb-4">Iniciar Sesión</h1>
-      <a
-        href={zitadelAuthUrl}
-        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-      >
-        Login con ZITADEL
-      </a>
+    <div id="welcome-screen" className="bg-white/10 backdrop-blur-md p-10 rounded-3xl shadow-2xl text-center w-full transform transition-all duration-500 hover:scale-105">
+      <div className="flex items-center justify-center mb-4">
+      <img
+          src={logoAgroMarket} 
+          alt="Logo de AgroMarket"      
+          className="w-12 h-12 mr-3 transform rotate-12 animate-pulse" 
+        />
+      </div>
+      <p className="text-lg sm:text-xl text-white mb-8">Bienvenido a la plataforma que conecta la cosecha con tu comunidad.</p>
+
+      <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <button
+          onClick={() => window.location.href = "https://interle-jy3ptw.us1.zitadel.cloud/oauth/v2/authorize?client_id=338010317902660978&response_type=code&scope=openid%20profile%20email&redirect_uri=http://localhost:3000/callback"}
+          className="w-full bg-white text-green-600 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-100 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75"
+        >
+          Login
+        </button>
+        <button
+          onClick={() => navigate('/singup')}
+          className="w-full bg-transparent text-white font-bold py-3 px-6 rounded-full border-2 border-white hover:bg-white hover:text-green-600 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-75"
+        >
+          Registrarse
+        </button>
+      </div>
     </div>
   );
 };
 
-export default Login;
+export default WelcomePage;
