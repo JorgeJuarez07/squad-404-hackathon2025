@@ -1,0 +1,18 @@
+.chat-page-container {
+    background-color: #1a201a;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+.chat-page-content {
+    width: 100%;
+    max-width: 500px;
+    background-color: #1e2a1e;
+    border-radius: 20px;
+    margin: 20px;
+    padding: 10px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
