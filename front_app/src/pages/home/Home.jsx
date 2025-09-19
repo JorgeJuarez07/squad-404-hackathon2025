@@ -53,7 +53,6 @@ const Home = () => {
     setCurrentView('products');
   };
   
-  // Condicional para decidir qué vista mostrar
   let content;
   if (currentView === 'products') {
     content = <Products
@@ -73,7 +72,7 @@ const Home = () => {
           {content}
         </>
       ) : (
-        <h1>Cargando usuario...</h1>
+        <h1>Cargando...</h1>
       )}
     </div>
   );

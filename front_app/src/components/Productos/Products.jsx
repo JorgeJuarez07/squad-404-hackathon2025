@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Products.css';
 
 const productsData = [
@@ -10,7 +11,8 @@ const productsData = [
   { id: 6, name: 'Lechugas Orgánicas', description: 'Hojas frescas y crujientes, cultivadas sin pesticidas.', delivery: 'Envío a domicilio' },
 ];
 
-const Products = ({ user, logout, onProfileClick }) => { // <-- Add 'onProfileClick' here
+const Products = ({ user, logout, onProfileClick }) => {
+  const navigate = useNavigate();
   return (
     <div className="products-page-container">
       <div className="page-header">
@@ -20,13 +22,12 @@ const Products = ({ user, logout, onProfileClick }) => { // <-- Add 'onProfileCl
         </h1>
         <div className="nav-links">
           <a href="#" className="nav-item">Mis Productos</a>
-          <a href="#" className="nav-item">Chats</a>
+          <a href="#" onClick={() => navigate('/chats')} className="nav-item">Chats</a>
           <a href="#" onClick={onProfileClick} className="nav-item">Mi Perfil</a>
-         <a href="#" className="nav-item cart-button">
+          <a href="#" className="nav-item cart-button">
             <span className="icon">🛒</span>
             Carrito
           </a>
-          {/* Add the onClick event to the "Cerrar Sesión" button */}
           <a href="#" className="nav-item logout-button" onClick={logout}>
             Cerrar Sesión
           </a>
