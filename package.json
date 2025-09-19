@@ -1,0 +1,26 @@
+{
+  "name": "squad-404-hackathon2025",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "install:frontend": "npm install --prefix front_app",
+  "start:backend": "node backend/server.js",
+  "start:frontend": "npm start --prefix front_app",
+  "dev": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JorgeJuarez07/squad-404-hackathon2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JorgeJuarez07/squad-404-hackathon2025/issues"
+  },
+  "homepage": "https://github.com/JorgeJuarez07/squad-404-hackathon2025#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
