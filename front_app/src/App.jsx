@@ -24,10 +24,6 @@ const App = () => {
     navigate('/login');
   };
 
-  const handleProfileClick = () => {
-    navigate('/profile');
-  };
-
   useEffect(() => {
     const syncLogout = (event) => {
       if (event.key === 'tokens' && !event.newValue) {
@@ -52,11 +48,15 @@ const App = () => {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Home />} />
+        {/* Se usa el componente Profile de la carpeta pages */}
         <Route 
           path="/profile" 
-          element={<Profile logout={handleLogout} onProfileClick={handleProfileClick} />} 
+          element={<Profile logout={handleLogout} />} 
         />
+        {/* Se corrige la ruta duplicada /singup */}
         <Route path="/profile-edit" element={<ProfileEdit />} />
+        {/* Se puede dejar esta ruta para ver perfiles de otros usuarios */}
+        <Route path="/profile/:id" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
@@ -70,4 +70,3 @@ const AppWrapper = () => (
 );
 
 export default AppWrapper;
-

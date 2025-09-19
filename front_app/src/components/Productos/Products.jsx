@@ -1,5 +1,7 @@
 
 import NavigationBar from '../NavigationBar/NavigationBar'; // <-- 1. Importamos la barra de navegación
+import { useNavigate } from 'react-router-dom';
+
 import './Products.css'; // Te recomiendo crear un CSS para la página
 
 // Datos de los productos
@@ -11,12 +13,41 @@ const productsData = [
   // ... más productos si quieres
 ];
 
-const ProductsPage = ({ logout, onProfileClick }) => {
+const Products = ({ user, logout, onProfileClick }) => {
+  const navigate = useNavigate(); // <-- Usa el hook aquí.
+
+  const handleProfileClick = (e) => {
+  e.preventDefault();
+  // Usar ?. para acceder a user.id de forma segura
+  navigate(`/profile/${user?.id}`, { state: { user } });
+};
+
+
   return (
     <div className="products-page-container">
       {/* 2. Usamos el componente NavigationBar y le pasamos las props */}
       <NavigationBar logout={logout} onProfileClick={onProfileClick} />
       
+      <div className="page-header">
+        <h1 className="agromarket-logo">
+          <span className="logo-icon"></span>
+          <span className="logo-text">AgroMarket</span>
+        </h1>
+        <div className="nav-links">
+          <a href="#" className="nav-item">Mis Productos</a>
+          <a href="#" className="nav-item">Chats</a>
+          <a href="#" onClick={handleProfileClick} className="nav-item">Mi Perfil</a>
+         <a href="#" className="nav-item cart-button">
+            <span className="icon">🛒</span>
+            Carrito
+          </a>
+          {/* Add the onClick event to the "Cerrar Sesión" button */}
+          <a href="#" className="nav-item logout-button" onClick={logout}>
+            Cerrar Sesión
+          </a>
+        </div>
+      </div>
+
       <h2 className="products-main-title">Productos Disponibles</h2>
       <p className="products-subtitle">Del campo a tu hogar. Frescura y calidad en cada cosecha.</p>
       
@@ -40,4 +71,4 @@ const ProductsPage = ({ logout, onProfileClick }) => {
   );
 };
 
-export default ProductsPage;
+export default Products;
