@@ -18,7 +18,7 @@ const Profile = ({ logout, onProfileClick }) => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <NavigationBar logout={logout} onProfileClick={onProfileClick} />
-      
+
       <div className="flex items-center justify-center py-12">
         <div className="w-full max-w-sm p-8 space-y-6 bg-white rounded-lg shadow-md">
           

@@ -14,6 +14,7 @@ import Callback from "./pages/login/Callback";
 import SingUp from "./pages/singup/Singup";
 import Profile from "./pages/profile/Profile";
 import ProfileEdit from "./pages/profile/ProfileEdit";
+import Products from './pages/products/Products';
 
 const App = () => {
   const navigate = useNavigate();
@@ -57,6 +58,12 @@ const App = () => {
         <Route path="/profile-edit" element={<ProfileEdit />} />
         {/* Se puede dejar esta ruta para ver perfiles de otros usuarios */}
         <Route path="/profile/:id" element={<Profile />} />
+        <Route 
+  path="/products" 
+  element={<Products logout={handleLogout} />} 
+/>
+
+
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
