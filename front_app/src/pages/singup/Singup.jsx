@@ -4,7 +4,6 @@ import './singup.css';
 
 const SingupPage: React.FC = () => {
       const navigate = useNavigate();
-  // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     givenName: '',
     familyName: '',
@@ -14,7 +13,6 @@ const SingupPage: React.FC = () => {
     password: '',
   });
 
-  // Función para manejar los cambios en los campos del formulario
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -23,17 +21,13 @@ const SingupPage: React.FC = () => {
     });
   };
 
-  // Función para manejar el envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Generar el objeto JSON con los datos del formulario
     const userData = JSON.stringify(formData);
 
-    // Log para ver el JSON generado
     console.log('User Data:', userData);
 
-    // Aquí puedes enviar el JSON al backend
     try {
       const response = await fetch('https://your-backend-endpoint.com/register', {
         method: 'POST',
@@ -45,7 +39,7 @@ const SingupPage: React.FC = () => {
 
       if (response.ok) {
         alert('Usuario creado con éxito');
-        // Redirigir a otra página o hacer algo con la respuesta
+
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.message}`);

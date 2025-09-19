@@ -1,17 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import logoAgroMarket from '../../resources/Untitled-removebg-preview.png'; // <--- Importación correcta del logo
-import './login.css'; // Asegúrate de tener este archivo CSS para estilos personalizados
+import logoAgroMarket from '../../resources/Untitled-removebg-preview.png'; 
+import './login.css';
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Esta es la URL de ZITADEL a la que rediriges al usuario para iniciar sesión.
-  const zitadelAuthUrl = `https://interle-jy3ptw.us1.zitadel.cloud/oauth/v2/authorize?client_id=338010317902660978&response_type=code&scope=openid%20profile%20email&redirect_uri=http://localhost:3000/callback`;
-
-  // Esta lógica se encarga de manejar la redirección de ZITADEL después de que el usuario inicia sesión.
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const code = urlParams.get('code');

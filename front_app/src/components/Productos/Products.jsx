@@ -1,38 +1,22 @@
-import React from 'react';
-import './Products.css';
 
+import NavigationBar from '../NavigationBar/NavigationBar'; // <-- 1. Importamos la barra de navegación
+import './Products.css'; // Te recomiendo crear un CSS para la página
+
+// Datos de los productos
 const productsData = [
   { id: 1, name: 'Tomates Orgánicos', description: 'Cosecha fresca del día, perfectos para ensaladas y salsas.', delivery: 'Envío a domicilio' },
-  { id: 2, name: 'Aguacates Hass', description: 'Aguacates cremosos, listos para hacer un delicioso guacamole.', delivery: 'Recoger en tienda' },
+  { id: 2, name: 'Aguacates Hass', description: 'Aguacates cremosos, listos para un delicioso guacamole.', delivery: 'Recoger en tienda' },
   { id: 3, name: 'Fresas Frescas', description: 'Fresas dulces y jugosas, cultivadas con métodos tradicionales.', delivery: 'Envío a domicilio' },
   { id: 4, name: 'Maíz Orgánico', description: 'Mazorcas de maíz tierno, ideales para asar o hervir.', delivery: 'Recoger en tienda' },
-  { id: 5, name: 'Zanahorias Frescas', description: 'Zanahorias de la huerta, crujientes y dulces.', delivery: 'Envío a domicilio' },
-  { id: 6, name: 'Lechugas Orgánicas', description: 'Hojas frescas y crujientes, cultivadas sin pesticidas.', delivery: 'Envío a domicilio' },
+  // ... más productos si quieres
 ];
 
-const Products = ({ user, logout, onProfileClick }) => { // <-- Add 'onProfileClick' here
+const ProductsPage = ({ logout, onProfileClick }) => {
   return (
     <div className="products-page-container">
-      <div className="page-header">
-        <h1 className="agromarket-logo">
-          <span className="logo-icon"></span>
-          <span className="logo-text">AgroMarket</span>
-        </h1>
-        <div className="nav-links">
-          <a href="#" className="nav-item">Mis Productos</a>
-          <a href="#" className="nav-item">Chats</a>
-          <a href="#" onClick={onProfileClick} className="nav-item">Mi Perfil</a>
-         <a href="#" className="nav-item cart-button">
-            <span className="icon">🛒</span>
-            Carrito
-          </a>
-          {/* Add the onClick event to the "Cerrar Sesión" button */}
-          <a href="#" className="nav-item logout-button" onClick={logout}>
-            Cerrar Sesión
-          </a>
-        </div>
-      </div>
-
+      {/* 2. Usamos el componente NavigationBar y le pasamos las props */}
+      <NavigationBar logout={logout} onProfileClick={onProfileClick} />
+      
       <h2 className="products-main-title">Productos Disponibles</h2>
       <p className="products-subtitle">Del campo a tu hogar. Frescura y calidad en cada cosecha.</p>
       
@@ -56,6 +40,4 @@ const Products = ({ user, logout, onProfileClick }) => { // <-- Add 'onProfileCl
   );
 };
 
-
-
-export default Products;
+export default ProductsPage;

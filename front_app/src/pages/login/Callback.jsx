@@ -14,12 +14,11 @@ const Callback = () => {
       return;
     }
 
-    // Intercambiar el code por tokens en tu backend
     axios
       .post("http://localhost:4000/auth/token", { code })
       .then((res) => {
         localStorage.setItem("tokens", JSON.stringify(res.data));
-        navigate("/"); // Redirige a home
+        navigate("/");
       })
       .catch(() => navigate("/login"));
   }, [navigate]);

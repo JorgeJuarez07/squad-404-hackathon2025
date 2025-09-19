@@ -17,16 +17,18 @@ const Home = () => {
       return;
     }
 
-    axios
-      .get("http://localhost:4000/me", {
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
-      })
-      .then((res) => setUser(res.data))
-      .catch(() => logout());
+axios
+  .get("http://localhost:4000/me", {
+    headers: { Authorization: `Bearer ${tokens.access_token}` },
+  })
+  .then((res) => {
+    localStorage.setItem('user', JSON.stringify(res.data));
+    setUser(res.data);
+  })
+  .catch(() => logout());
   }, []);
 
   const logout = () => {
-    // ... (your logout function remains the same)
     const tokens = JSON.parse(localStorage.getItem("tokens"));
     if (!tokens?.id_token) {
       localStorage.removeItem("tokens");
@@ -40,27 +42,22 @@ const Home = () => {
     const logoutUrl = `https://interle-jy3ptw.us1.zitadel.cloud/oidc/v1/end_session?id_token_hint=${idToken}&post_logout_redirect_uri=${redirectUri}&state=${state}`;
 
     localStorage.removeItem("tokens");
+    localStorage.removeItem("user");
     window.location.href = logoutUrl;
   };
 
-  const onProfileClick = (e) => {
-    e.preventDefault();
-    setCurrentView('profile');
-  };
+  const onProfileClick = (e) => {navigate('/profile')};
 
   const onProductsClick = (e) => {
     e.preventDefault();
     setCurrentView('products');
   };
   
-  // Condicional para decidir qué vista mostrar
   let content;
   if (currentView === 'products') {
     content = <Products
-                user={user}
                 logout={logout}
                 onProfileClick={onProfileClick}
-                onProductsClick={onProductsClick}
               />;
   } else if (currentView === 'profile') {
     content = <Profile user={user} logout={logout} />;
@@ -73,7 +70,7 @@ const Home = () => {
           {content}
         </>
       ) : (
-        <h1>Cargando usuario...</h1>
+        <h1>Cargando...</h1>
       )}
     </div>
   );

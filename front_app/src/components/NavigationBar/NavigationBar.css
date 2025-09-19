@@ -1,9 +1,7 @@
 
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
 
 :root {
-
   --color-fondo-principal: #F7F5F2; 
   --color-fondo-tarjeta: #FFFFFF;
   --color-verde-hoja: #344E41;
@@ -12,7 +10,6 @@
   --color-texto-principal: #333333;
   --color-texto-secundario: #666666;
   --color-sombra: rgba(0, 0, 0, 0.08);
-
   --nav-bg: #1A1A1A;
   --nav-text: #E0E0E0; 
   --nav-accent: #F8B12F; 
@@ -62,7 +59,6 @@ body {
   color: var(--nav-accent);
 }
 
-
 .nav-links {
   display: flex;
   align-items: center;
@@ -77,7 +73,7 @@ body {
   transition: all 0.3s ease;
   font-size: 0.9em;
   font-weight: 500;
-  margin-left: 15px;
+  margin-left: 15px; 
 }
 
 .nav-item:first-child {
