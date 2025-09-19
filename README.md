@@ -1,65 +1,44 @@
 # AgroMarket (squad-404-hackathon2025)
 
-> Una aplicación web full-stack diseñada para conectar a productores agrícolas directamente con los consumidores, facilitando la compra y venta de productos frescos del campo.
+> A full-stack web application designed to connect agricultural producers directly with consumers, facilitating the purchase and sale of fresh farm products.
 
 ---
 
-## 📋 Tabla de Contenidos
-1. [Prerrequisitos](#-prerrequisitos)
-2. [Instalación y Configuración](#️-instalación-y-configuración)
-3. [Ejecutar la Aplicación](#-ejecutar-la-aplicación)
-4. [Estructura del Proyecto](#-estructura-del-proyecto)
+## 📋 Table of Contents
+1. [Prerequisites](#-prerequisites)
+2. [Installation and Setup](#️-installation-and-setup)
+3. [Running the Application](#-running-the-application)
+4. [Project Structure](#-project-structure)
 
 ---
 
-## 📄 Prerrequisitos
+## 📄 Prerequisites
 
-Antes de comenzar, asegúrate de tener instalado el siguiente software en tu sistema:
+Before you begin, ensure you have the following software installed on your system:
 
-- **Node.js**: Se recomienda la versión `v18.x` o superior. Puedes descargarlo desde [nodejs.org](https://nodejs.org/).
-- **npm**: Generalmente se instala de forma automática junto con Node.js.
+- **Node.js**: Version `v18.x` or higher is recommended. You can download it from [nodejs.org](https://nodejs.org/).
+- **npm**: This is usually installed automatically with Node.js.
 
 ---
 
-## ⚙️ Instalación y Configuración
+## ⚙️ Installation and Setup
 
-Sigue estos pasos para configurar el entorno de desarrollo por primera vez.
+Follow these steps to set up the development environment for the first time.
 
-### 1. Clona el Repositorio
+### 1. Clone the Repository
 ```bash
-git clone <URL-de-tu-repositorio>
+git clone <your-repository-url>
 ```
 
-### 2. Navega al Directorio Raíz
+### 2. Navigate to the Root Directory
 ```bash
 cd squad-404-hackathon2025
 ```
 
-### 3. Configura las Variables de Entorno
-El backend requiere un archivo `.env` para gestionar las claves de la API y la configuración del servidor.
 
-- Navega a la carpeta del backend:
-  ```bash
-  cd backend
-  ```
-- Crea un archivo llamado `.env` y copia el siguiente contenido, reemplazando los valores con tus propias credenciales.
-  ```env
-  # Variables de autenticación (ZITADEL)
-  ZITADEL_CLIENT_ID=TU_CLIENT_ID
-  ZITADEL_CLIENT_SECRET=TU_CLIENT_SECRET
-  ZITADEL_ISSUER=TU_ISSUER_URL
-  ZITADEL_REDIRECT_URI=http://localhost:3000/callback
 
-  # Puerto del servidor backend
-  PORT=4000
-  ```
-- Vuelve a la carpeta raíz del proyecto:
-  ```bash
-  cd ..
-  ```
-
-### 4. Instala todas las Dependencias
-Ejecuta el siguiente comando desde la carpeta **raíz** para instalar las dependencias del backend y del frontend.
+### 3. Install All Dependencies
+Run the following command from the **root** directory to install dependencies for both the backend and frontend.
 
 ```bash
 npm install && npm run install:frontend
@@ -67,26 +46,26 @@ npm install && npm run install:frontend
 
 ---
 
-## 🚀 Ejecutar la Aplicación
+## 🚀 Running the Application
 
-Una vez que la instalación esté completa, puedes iniciar ambos servidores de desarrollo con un único comando desde la carpeta **raíz**.
+Once the installation is complete, you can start both development servers with a single command from the **root** directory.
 
 ```bash
 npm run dev
 ```
 
-Este comando utilizará `concurrently` para lanzar ambos procesos al mismo tiempo. Verás la salida de ambos en tu terminal.
+This command will use `concurrently` to launch both processes at the same time. You will see the output from both servers in your terminal.
 
-- El **backend** estará disponible en `http://localhost:4000`.
-- El **frontend** estará disponible en `http://localhost:3000` y debería abrirse automáticamente en tu navegador.
+- The **backend** will be available at `http://localhost:4000`.
+- The **frontend** will be available at `http://localhost:3000` and should open automatically in your browser.
 
-Para detener ambos servidores, presiona `Ctrl + C` en la terminal donde se está ejecutando el comando.
+To stop both servers, press `Ctrl + C` in the terminal where the command is running.
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Project Structure
 
-El proyecto está organizado en dos carpetas principales:
+The project is organized into two main folders:
 
--   `backend/`: Contiene el servidor de Node.js y Express, encargado de la lógica de negocio y la comunicación con servicios externos.
--   `front_app/`: Contiene la aplicación de React (Create React App) que constituye la interfaz de usuario.
+-   `backend/`: Contains the Node.js and Express server, responsible for business logic and communication with external services.
+-   `front_app/`: Contains the React application (Create React App) that makes up the user interface.
