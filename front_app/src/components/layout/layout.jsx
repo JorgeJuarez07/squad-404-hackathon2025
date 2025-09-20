@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './header'; // Asegúrate de que la ruta sea correcta
+import Header from './header'; 
 
 const Layout = ({ children, title, onBack }) => {
     return (
