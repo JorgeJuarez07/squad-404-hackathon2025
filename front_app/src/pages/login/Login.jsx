@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import logoAgroMarket from '../../resources/Untitled-removebg-preview.png'; 
+import logoAgroMarket from '../../resources/Logo.png'; 
 import './login.css';
 
 const Login = () => {
