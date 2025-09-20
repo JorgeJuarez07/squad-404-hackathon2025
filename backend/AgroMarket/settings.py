@@ -32,10 +32,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Añade tus aplicaciones aquí
-    'rest_framework',
+    'rest_framework', # <-- Agrega esta línea si no la tienes
+    'rest_framework_simplejwt',
+    'authentication',
     'drf_spectacular',
+    'products'
 ]
 
 MIDDLEWARE = [
@@ -73,11 +74,14 @@ WSGI_APPLICATION = 'AgroMarket.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'hackaton',
+        'USER': 'postgres',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',
+        'PORT': 5436,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -120,8 +124,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Django REST Framework
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -132,3 +138,7 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+AUTH_USER_MODEL = 'authentication.CustomUser'
+# Configuración de archivos media (imágenes subidas por el usuario)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
