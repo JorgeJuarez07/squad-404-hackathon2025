@@ -1,0 +1,29 @@
+# Directorios de entornos virtuales
+venv/
+.venv/
+
+# Dependencias de Node.js
+node_modules/
+
+# Archivos de base de datos de Django
+db.sqlite3
+
+# Archivos de caché y de compilación
+__pycache__/
+*.pyc
+
+# Archivos de sistema operativo y de editores de texto
+.DS_Store
+.vscode/
+.idea/
+
+# Carpetas de archivos subidos o estáticos
+/uploads/*
+/staticfiles/*
+
+# Archivos de registro
+logs/
+*.log
+
+# Archivo de credenciales
+.env
