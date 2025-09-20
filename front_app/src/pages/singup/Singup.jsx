@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './singup.css'; 
 
-const SingupPage: React.FC = () => {
+const SingupPage  = () => {
       const navigate = useNavigate();
   const [formData, setFormData] = useState({
     givenName: '',
