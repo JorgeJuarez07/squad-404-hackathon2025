@@ -11,6 +11,8 @@ db.sqlite3
 # Archivos de caché y de compilación
 __pycache__/
 *.pyc
+.pyc
+
 
 # Archivos de sistema operativo y de editores de texto
 .DS_Store
