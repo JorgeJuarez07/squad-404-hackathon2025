@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import logoAgroMarket from '../../resources/Untitled-removebg-preview.png'; 
+import logoAgroMarket from '../../resources/Logo.png'; 
 import './login.css';
 
 const Login = () => {
@@ -12,7 +12,7 @@ const Login = () => {
     const code = urlParams.get('code');
 
     if (code) {
-      axios.post('http://localhost:4000/callback', { code })
+      axios.post('http://localhost:8673/callback', { code })
         .then(res => {
           localStorage.setItem('tokens', JSON.stringify(res.data));
           navigate('/');

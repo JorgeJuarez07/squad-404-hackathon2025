@@ -15,7 +15,7 @@ const Callback = () => {
     }
 
     axios
-      .post("http://localhost:4000/auth/token", { code })
+      .post("http://localhost:8673/auth/token", { code })
       .then((res) => {
         localStorage.setItem("tokens", JSON.stringify(res.data));
         navigate("/");

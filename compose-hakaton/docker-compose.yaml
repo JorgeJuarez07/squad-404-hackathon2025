@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: agroMarket
+    environment:
+      - POSTGRES_DB=hackaton
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+    ports:
+      - "5436:5432"
+    restart: always
+    

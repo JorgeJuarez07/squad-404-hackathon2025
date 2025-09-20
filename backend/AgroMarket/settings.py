@@ -35,7 +35,6 @@ INSTALLED_APPS = [
 
     # Añade tus aplicaciones aquí
     'rest_framework',
-    'authentication',
     'drf_spectacular',
 ]
 

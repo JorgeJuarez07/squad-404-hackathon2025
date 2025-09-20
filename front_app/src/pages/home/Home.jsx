@@ -18,7 +18,7 @@ const Home = () => {
     }
 
 axios
-  .get("http://localhost:4000/me", {
+  .get("http://localhost:8673/me", {
     headers: { Authorization: `Bearer ${tokens.access_token}` },
   })
   .then((res) => {
