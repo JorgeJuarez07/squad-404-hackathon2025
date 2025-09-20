@@ -41,7 +41,7 @@ cd squad-404-hackathon2025
 Run the following command from the **root** directory to install dependencies for both the backend and frontend.
 
 ```bash
-npm install && npm run install:frontend && pip install requirements.txt
+npm install && npm run install:frontend && npm run install:backend  && pip install requirements.txt
 ```
 
 ---
