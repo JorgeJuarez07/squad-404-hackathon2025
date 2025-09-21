@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install:frontend": "npm install --prefix front_app",
+    "install:backend": "npm install --prefix backend",
     "setup:backend": "python3.12 -m venv venv && ./venv/bin/pip install -r backend/requirements.txt",
     "start:backend": "node backend/server.js",
     "start:frontend": "npm start --prefix front_app",
@@ -13,7 +14,7 @@
     "migrate": "./venv/bin/python backend/manage.py migrate",
     "docker:up": "cd compose-hakaton/ && docker compose up -d && cd ..",
     "docker:down": "cd compose-hakaton/ && docker compose down && cd ..",
-    "setup": "npm install && npm run install:frontend && npm run setup:backend && npm run docker:up && npm run makemigrations && npm run migrate"
+    "setup": "npm install && npm run install:frontend && npm run install:backend && npm run setup:backend && npm run docker:up && npm run makemigrations && npm run migrate"
   },
   "repository": {
     "type": "git",
@@ -30,3 +31,4 @@
     "concurrently": "^9.2.1"
   }
 }
+
