@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'AgroMarket.urls'
@@ -142,3 +143,8 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 # Configuración de archivos media (imágenes subidas por el usuario)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4000",
+    "http://127.0.0.1:4000",
+]
