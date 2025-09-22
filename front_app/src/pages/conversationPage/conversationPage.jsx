@@ -1,88 +1,61 @@
-// src/pages/ConversationPage/ConversationPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { conversations } from '../../data/conversationData';
-import ConversationHeader from '../../components/Layout/conversationHeader';
+import { useAuth } from '../../context/AuthContext';
+import { db } from '../../firebase';
+import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
+import ConversationHeader from '../../components/conversation/conversationHeader';
 import MessageList from '../../components/conversation/messageList';
 import MessageInput from '../../components/conversation/messageInput';
+import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import './conversationPage.css';
 
-/*const ConversationPage = () => {
-    const [chat, setChat] = useState(null);
+const ConversationPage = ({logout, onProfileClick }) => {
+    const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
     const { chatId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     useEffect(() => {
-        const fetchConversation = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-
-            await new Promise(resolve => setTimeout(resolve, 500));
-            const data = conversations[chatId];
-            
-            if (data) {
-            setChat(data);
-            } else {
-            throw new Error('Conversación no encontrada.');
-            }
-
-        } catch (err) {
-            setError(err.message);
-        } finally {
+        if (!chatId || !user) {
             setIsLoading(false);
-        }
+            return;
         };
 
-        fetchConversation();
-    }, [chatId]);
+        const q = query(
+        collection(db, 'conversations', chatId, 'messages'),
+        orderBy('timestamp', 'asc')
+        );
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const msgs = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+            id: doc.id,
+            text: data.text,
+            sender: data.senderId === user.sub ? 'me' : 'them'
+            };
+        });
+        console.log(user.sub);
+        setMessages(msgs);
+        setIsLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [chatId, user]);
 
     if (isLoading) {
-        return <div className="status-message">Cargando conversación...</div>;
-    }
-
-    if (error) {
-        return <div className="status-message error">{error}</div>;
+        return <div className="status-message">Cargando mensajes...</div>;
     }
 
     return (
         <div className="conversation-container">
-        <div className="conversation-content">
-            <ConversationHeader name={chat.name} onBack={() => navigate('/')} />
-            <MessageList messages={chat.messages} />
-            <MessageInput />
+            <NavigationBar logout={logout} onProfileClick={onProfileClick} />
+        <div className="content-card">
+            <ConversationHeader name={"Nombre Contacto"} onBack={() => navigate('/chats')} />
+            <MessageList messages={messages} />
+            <MessageInput chatId={chatId} />
         </div>
-        </div>
-    );
-};
-
-export default ConversationPage; */
-
-const ConversationPage = () => {
-    const { chatId } = useParams();
-    const navigate = useNavigate();
-
-    const chat = conversations[chatId];
-
-    if (!chat) {
-        return (
-        <div className="status-message error">
-            Conversación no encontrada.
-            <button onClick={() => navigate('/chats')}>Volver a Chats</button>
-        </div>
-        );
-    }
-
-    return (
-        <div className="conversation-container">
-            <div className="content-card">
-                <ConversationHeader name={chat.name} onBack={() => navigate('/chats')} />
-                <MessageList messages={chat.messages} />
-                <MessageInput />
-            </div>
         </div>
     );
 };

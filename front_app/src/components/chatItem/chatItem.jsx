@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './chatItem.css';
 
 const ChatItem = ({ id, initial, name, message, timestamp }) => {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const handleChatClick = () => {
         navigate(`/chats/${id}`);
