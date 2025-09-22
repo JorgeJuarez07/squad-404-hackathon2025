@@ -22,6 +22,8 @@ import Profile from "./pages/profile/Profile";
 import ProfileEdit from "./pages/profile/ProfileEdit";
 import Products from './pages/products/Products';
 import ShoppingCartPage from './pages/ShoppingCart/ShoppingCartPage';
+import ChatPage from './pages/chat/chatPage';
+import ConversationPage from './pages/conversationPage/conversationPage';
 
 // Componente que define todas las rutas de la aplicación
 const AppRoutes = () => {
@@ -42,6 +44,8 @@ const AppRoutes = () => {
         <Route path="/profile-edit" element={<ProfileEdit />} />
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/cart" element={<ShoppingCartPage />} />
+        <Route path="/chats" element={<ChatPage />} />
+        <Route path="/chats/:chatId" element={<ConversationPage />} />
       </Route>
 
       {/* --- Redirección --- */}

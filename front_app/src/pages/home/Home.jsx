@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Products from "../../components/Productos/Products";
+import Products from "../../components/Home-productos/Home-products";
 import Profile from "../../components/Profile/Profile";
 
 const Home = () => {

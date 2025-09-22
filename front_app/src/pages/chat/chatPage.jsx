@@ -5,6 +5,8 @@ import ChatList from '../../components/chatList/chatList';
 import { chatsData } from '../../data/conversationData';
 import './chatPage.css';
 
+import NavigationBar from '../../components/NavigationBar/NavigationBar'; 
+
 /*const chatsData = [
     {
         id: 1,
@@ -43,7 +45,7 @@ import './chatPage.css';
     },
 ];*/
 
-const ChatPage = () => {
+const ChatPage = ({logout, onProfileClick }) => {
     const navigate = useNavigate();
     const handleGoHome = () => {
         navigate('/');
@@ -52,6 +54,7 @@ const ChatPage = () => {
     return (
         <div className="chat-page-container">
             <div className="chat-page-content">
+            <NavigationBar logout={logout} onProfileClick={onProfileClick} />
                 <Header title="Chats" onBack={handleGoHome}/>
                 <ChatList chats={chatsData} />
             </div>
