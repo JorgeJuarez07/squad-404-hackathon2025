@@ -1,62 +1,127 @@
+/*
+ * =========================================================
+ * CSS MODERNO Y COHESIVO PARA EL ITEM DEL CARRITO
+ * =========================================================
+*/
+
+/* --- Contenedor principal de cada item (Ahora es una tarjeta) --- */
 .cart-item {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #5a5a5a;
-  padding: 1rem 0;
+  justify-content: space-between;
+  
+  /* Reemplazamos el border-bottom por un diseño de tarjeta */
+  background-color: #1f2937; /* Fondo de la tarjeta */
+  padding: 1.5rem;
+  border-radius: 16px; /* Bordes redondeados */
+  margin-bottom: 1.5rem; /* Espacio entre tarjetas */
+  border: 1px solid #374151;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.cart-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Imagen del producto --- */
 .cart-item-image {
   width: 80px;
   height: 80px;
   object-fit: cover;
-  margin-right: 1rem;
-  border-radius: 8px;
+  margin-right: 1.5rem; /* Más espacio */
+  border-radius: 12px;
+  flex-shrink: 0; /* Evita que la imagen se encoja */
 }
 
+/* --- Detalles (Nombre y Precio) --- */
 .cart-item-details {
-  flex-grow: 1;
+  flex-grow: 1; /* Ocupa el espacio disponible */
 }
 
 .cart-item-name {
-  font-size: 1.2rem;
-  margin: 0;
-  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600; /* Un poco más de peso */
+  margin: 0 0 8px 0;
+  color: #e5e7eb; /* Un blanco más suave */
 }
 
 .cart-item-price {
-  color: #27ae60;
-  font-weight: bold;
+  color: #22c55e; /* Un verde más vibrante */
+  font-weight: 400; /* Hacemos el precio unitario menos prominente que el total */
+  font-size: 0.9rem;
 }
 
+/* --- Controles de Cantidad (+ y -) --- */
 .cart-item-quantity {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #000;
+  gap: 1rem; /* Más espacio entre los botones y el número */
+  background-color: #374151;
+  padding: 0.5rem;
+  border-radius: 30px; /* Estilo de píldora */
+  margin-left: 1rem;
+}
+
+.cart-item-quantity span {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  min-width: 25px;
+  text-align: center;
 }
 
 .cart-item-quantity button {
   border: none;
-  background: #27ae60;
-  color: rgb(255, 255, 255);
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.cart-item-total {
+  background: #4b5563;
+  color: #e5e7eb;
+  border-radius: 50%; /* Botones circulares para consistencia */
+  width: 28px;
+  height: 28px;
+  font-size: 1.2rem;
   font-weight: bold;
-  margin-left: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
 }
 
+.cart-item-quantity button:hover {
+  background-color: #22c55e;
+  color: #fff;
+}
+
+/* --- Total por producto --- */
+.cart-item-total {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-left: 2rem;
+  color: #e5e7eb;
+  min-width: 100px;
+  text-align: right;
+}
+
+/* --- Botón de Eliminar --- */
 .cart-item-remove {
-  background: #e74c3c;
-  color: rgb(255, 255, 255);
+  background: #374151; /* Color base más sutil */
+  color: #9ca3af;     /* Color de ícono gris */
   border: none;
-  font-size: 1.5rem;
-  margin-left: 1rem;
+  margin-left: 1.5rem;
   cursor: pointer;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cart-item-remove:hover {
+  background: #ef4444; /* Rojo al pasar el mouse */
+  color: #fff;
+  transform: scale(1.1); /* Efecto de crecimiento */
 }

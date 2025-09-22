@@ -1,16 +1,49 @@
 import React, { useState } from 'react';
 import ShoppingCartItem from '../../components/ShoppingCartItem/ShoppingCartItem';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
-import fetchWithAuth from '../../api'; // 👈 usamos el wrapper
+import fetchWithAuth from '../../api';
 import './ShoppingCartPage.css';
 
 const initialCartItems = [
-  //{ id: 1, name: 'Tomates Frescos', price: 200.50, quantity: 2, sellerWallet: "https://ilp.interledger-test.dev/vsdsd", image: 'https://imag.bonviveur.com/racimos-de-tomates-frescos-vendidos-como-verdura.webp' },
-  { id: 2, name: 'Lechuga Romana', price: 100.20, quantity: 1, sellerWallet: "https://ilp.interledger-test.dev/1212", image: 'https://www.totenu.com/wp-content/uploads/lechuga-romana-TotEnU-1080x675.jpg' },
-  { id: 3, name: 'Tractor', price: 100000.00, quantity: 3, sellerWallet: "https://ilp.interledger-test.dev/2895de5", image: 'https://www.tractorpool.com.mx/media/4554/8384554/59118154/1757328616.jpg?width=240&height=180&crop=1' },
+  { 
+    id: 1, 
+    name: 'Tomates Frescos', 
+    price: 200.50, 
+    quantity: 2, 
+    sellerWallet: "https://ilp.interledger-test.dev/vsdsd", // Vendedor A
+    image: 'https://imag.bonviveur.com/racimos-de-tomates-frescos-vendidos-como-verdura.webp',
+    currency: "MXN" 
+  },
+  { 
+    id: 2, 
+    name: 'Lechuga Romana', 
+    price: 100.20, 
+    quantity: 1, 
+    sellerWallet: "https://ilp.interledger-test.dev/vsdsd", // Vendedor A (misma wallet)
+    image: 'https://www.totenu.com/wp-content/uploads/lechuga-romana-TotEnU-1080x675.jpg',
+    currency: "MXN" 
+  },
+  { 
+    id: 3, 
+    name: 'Tractor', 
+    price: 342355.00, 
+    quantity: 3, 
+    sellerWallet: "https://ilp.interledger-test.dev/sdcdscsd", // Vendedor B
+    image: 'https://www.tractorpool.com.mx/media/4554/8384554/59118154/1757328616.jpg?width=240&height=180&crop=1',
+    currency: "EUR" 
+  },
 ];
 
-const ShoppingCartPage = () => {
+// Helper para formatear los precios con su divisa
+const formatCurrency = (amount, currency) => {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2
+  }).format(amount);
+};
+
+const ShoppingCartPage = ({ user, logout, onProfileClick }) => {
   const [cartItems, setCartItems] = useState(initialCartItems);
   const [buyerWallet, setBuyerWallet] = useState("");
   const [redirects, setRedirects] = useState([]);
@@ -31,11 +64,20 @@ const ShoppingCartPage = () => {
   const handleRemove = (id) =>
     setCartItems(cartItems.filter(item => item.id !== id));
 
-  const calculateSubtotal = () =>
-    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
-
   const calculateTotalItems = () =>
     cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  
+  const calculateSubtotalsByCurrency = () => {
+    const subtotals = {};
+    cartItems.forEach(item => {
+      const amount = item.price * item.quantity;
+      if (!subtotals[item.currency]) {
+        subtotals[item.currency] = 0;
+      }
+      subtotals[item.currency] += amount;
+    });
+    return subtotals;
+  };
 
   const calculateAmountsPerSeller = (assetScale = 2) => {
     const walletTotals = {};
@@ -50,6 +92,11 @@ const ShoppingCartPage = () => {
   };
 
   const handleCheckout = async () => {
+    if (cartItems.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+
     let walletInput = buyerWallet;
 
     if (!walletInput) {
@@ -121,13 +168,15 @@ const ShoppingCartPage = () => {
     }
   };
 
+  const subtotals = calculateSubtotalsByCurrency();
+
   return (
     <>
-      <NavigationBar />
+            <NavigationBar logout={logout} onProfileClick={onProfileClick} />
       <div className="shopping-cart-container">
         <h1>Carrito de Compras</h1>
 
-        {cartItems.length === 0 && redirects.length === 0 ? (
+        {cartItems.length === 0 && redirects.length === 0 && completedPayments.length === 0 ? (
           <p>Tu carrito está vacío.</p>
         ) : (
           <div className="cart-content">
@@ -139,6 +188,7 @@ const ShoppingCartPage = () => {
                   onIncrease={handleIncrease}
                   onDecrease={handleDecrease}
                   onRemove={handleRemove}
+                  formatCurrency={formatCurrency}
                 />
               ))}
             </div>
@@ -149,39 +199,37 @@ const ShoppingCartPage = () => {
                 <span>Cantidad de artículos:</span>
                 <span>{calculateTotalItems()}</span>
               </div>
-              <div className="summary-row">
-                <span>Subtotal:</span>
-                <span>${calculateSubtotal()}</span>
-              </div>
-              <div className="summary-row">
-                <span>Envío:</span>
-                <span>$5.00</span>
-              </div>
+              <hr/>
+              <h4>Desglose de Totales</h4>
+              {Object.entries(subtotals).map(([currency, amount]) => (
+                <div className="summary-row" key={currency}>
+                  <span>Subtotal ({currency}):</span>
+                  <span>{formatCurrency(amount, currency)}</span>
+                </div>
+              ))}
               <hr />
-              <div className="summary-row total">
-                <span>Total:</span>
-                <span>${(parseFloat(calculateSubtotal()) + 5.00).toFixed(2)}</span>
-              </div>
+              <p className="total-disclaimer">
+                Los totales se pagarán en sus respectivas divisas.
+              </p>
 
-              {redirects.length === 0 && (
+              {redirects.length === 0 && cartItems.length > 0 && (
                 <button className="checkout-button" onClick={handleCheckout}>
                   Proceder al Pago
                 </button>
               )}
 
-              {/* Pagos pendientes */}
               {redirects.length > 0 && (
-                <div className="mt-4">
+                <div className="pending-payments">
                   <h4>Pagos pendientes</h4>
                   {redirects.map((r, idx) => (
-                    <div key={idx} className="p-2 border rounded mb-2">
-                      <p>Pago pendiente a {r.sellerWallet}</p>
-                      <a href={r.outgoingGrant.interact.redirect} target="_blank" rel="noopener noreferrer">
+                    <div key={idx} className="payment-action-card">
+                      <p>Pago pendiente a: <br/> <code>{r.sellerWallet}</code></p>
+                      <a href={r.outgoingGrant.interact.redirect} target="_blank" rel="noopener noreferrer" className="auth-link">
                         Abrir autorización
                       </a>
                       <button
                         onClick={() => finalizePayment(r)}
-                        className="ml-2 bg-green-500 text-white px-3 py-1 rounded"
+                        className="finalize-button"
                       >
                         Finalizar Pago
                       </button>
@@ -190,18 +238,16 @@ const ShoppingCartPage = () => {
                 </div>
               )}
 
-              {/* Pagos completados */}
               {completedPayments.length > 0 && (
-                <div className="mt-4">
+                <div className="completed-payments">
                   <h4>Pagos completados</h4>
                   <ul>
                     {completedPayments.map((s, idx) => (
-                      <li key={idx}>{s}</li>
+                      <li key={idx}>✅ {s}</li>
                     ))}
                   </ul>
                 </div>
               )}
-
             </div>
           </div>
         )}

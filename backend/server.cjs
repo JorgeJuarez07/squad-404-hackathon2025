@@ -315,6 +315,42 @@ app.post("/api/pay/finalize", async (req, res) => {
   }
 });
 
+app.get("/api/users", async (req, res) => {
+  try {
+    const token = await getMgmtApiToken();
+    console.log("Mgmt Token:", token);
+
+    const body = {
+      query: {
+        offset: 0,
+        limit: 100,
+        asc: true
+      }
+    };
+
+    const response = await axios.post(
+      `${ZITADEL_ISSUER}/v2/users`,
+      body,
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        }
+      }
+    );
+
+    res.json(response.data);
+
+  } catch (error) {
+    console.error("Error al obtener usuarios de ZITADEL:", error.response?.data || error.message);
+    res.status(500).json({
+      error: error.response?.data || error.message
+    });
+  }
+});
+
+
 
 
 app.listen(PORT, () =>

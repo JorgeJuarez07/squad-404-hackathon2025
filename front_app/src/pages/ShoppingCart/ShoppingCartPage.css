@@ -1,82 +1,146 @@
+/*
+ * ============================================
+ * ESTILOS MEJORADOS PARA SHOPPING CART PAGE
+ * ============================================
+*/
+
 .shopping-cart-container {
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1rem;
+  margin: 3rem auto;
+  padding: 2rem;
+  color: #e5e7eb;
 }
 
-.shopping-cart-container h1 {
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 2rem;
-  color: #2c3e50;
+  margin-bottom: 3rem;
+  color: #fff;
 }
 
 .cart-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Proporción más definida */
+  gap: 2.5rem; /* Más espacio entre columnas */
 }
 
-@media (min-width: 992px) {
-  .cart-content {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-}
-
-.cart-items-list {
-  flex-grow: 1;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
+/* --- Tarjeta de Resumen --- */
 .cart-summary {
-  background: #ffffff;  /* un gris clarito para contraste */
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  color: #2c3e50; /* texto oscuro */
+  background-color: #1f2937; /* Un gris oscuro ligeramente más claro que el fondo */
+  padding: 2rem;
+  border-radius: 16px; /* Bordes más redondeados */
+  border: 1px solid #374151;
+  height: fit-content;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-@media (min-width: 992px) {
-  .cart-summary {
-    align-self: flex-start;
-    position: sticky;
-    top: 2rem;
-  }
-}
-
-.cart-summary h3 {
+.cart-summary h3, .cart-summary h4 {
   margin-top: 0;
-  margin-bottom: 1rem;
-  color: #2c3e50; /* asegura que el título sea oscuro */
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 1rem;
 }
-
 
 .summary-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.8rem;
-  font-size: 1rem;
-  color: #2c3e50; /* asegura que las filas sean visibles */
-}
-.summary-row.total {
-  font-size: 1.2rem;
-  font-weight: bold;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
 }
 
+.summary-row span:first-child {
+  color: #9ca3af; /* Color para etiquetas */
+}
+
+.summary-row span:last-child {
+  font-weight: 600;
+}
+
+.total-disclaimer {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+hr {
+  display: none; /* Eliminamos los hr para usar bordes */
+}
+
+/* --- Botón de Checkout --- */
 .checkout-button {
   width: 100%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  background-color: #27ae60;
-  color: rgb(255, 255, 255);
+  padding: 0.8rem 1rem;
+  background-image: linear-gradient(to right, #10b981, #22c55e);
+  color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
 }
 
 .checkout-button:hover {
-  background-color: #2ecc71;
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(34, 197, 94, 0.3);
+}
+
+/* --- Secciones de Pago --- */
+.pending-payments, .completed-payments {
+  margin-top: 2rem;
+}
+
+.payment-action-card {
+  border: 1px solid #374151;
+  background-color: #374151;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.payment-action-card p {
+  word-break: break-all;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.auth-link {
+  display: block;
+  margin: 1rem 0;
+  color: #22c55e;
+  text-decoration: none;
+  font-weight: 600;
+}
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.finalize-button {
+  width: 100%;
+  padding: 0.6rem;
+  background-color: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.finalize-button:hover {
+  background-color: #10b981;
+}
+
+.completed-payments ul {
+  list-style: none;
+  padding: 0;
+}
+
+.completed-payments li {
+  color: #22c55e;
+  word-break: break-all;
+  font-weight: 600;
 }
