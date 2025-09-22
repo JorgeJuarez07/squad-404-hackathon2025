@@ -1,10 +1,7 @@
-
-import NavigationBar from '../NavigationBar/NavigationBar'; // <-- 1. Importamos la barra de navegación
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Products.css';
 
-import './Products.css'; // Te recomiendo crear un CSS para la página
-
-// Datos de los productos
 const productsData = [
   { id: 1, name: 'Tomates Orgánicos', description: 'Cosecha fresca del día, perfectos para ensaladas y salsas.', delivery: 'Envío a domicilio' },
   { id: 2, name: 'Aguacates Hass', description: 'Aguacates cremosos, listos para un delicioso guacamole.', delivery: 'Recoger en tienda' },
@@ -14,14 +11,27 @@ const productsData = [
 ];
 
 const Products = ({ user, logout, onProfileClick }) => {
-  const navigate = useNavigate(); // <-- Usa el hook aquí.
-
-
+  const navigate = useNavigate();
   return (
     <div className="products-page-container">
-      {/* 2. Usamos el componente NavigationBar y le pasamos las props */}
-      <NavigationBar logout={logout} onProfileClick={onProfileClick} />
-      
+      <div className="page-header">
+        <h1 className="agromarket-logo">
+          <span className="logo-icon"></span>
+          <span className="logo-text">AgroMarket</span>
+        </h1>
+        <div className="nav-links">
+          <a href="#" className="nav-item">Mis Productos</a>
+          <a href="#" onClick={() => navigate('/chats')} className="nav-item">Chats</a>
+          <a href="#" onClick={onProfileClick} className="nav-item">Mi Perfil</a>
+          <a href="#" className="nav-item cart-button">
+            <span className="icon">🛒</span>
+            Carrito
+          </a>
+          <a href="#" className="nav-item logout-button" onClick={logout}>
+            Cerrar Sesión
+          </a>
+        </div>
+      </div>
 
       <h2 className="products-main-title">Productos Disponibles</h2>
       <p className="products-subtitle">Del campo a tu hogar. Frescura y calidad en cada cosecha.</p>

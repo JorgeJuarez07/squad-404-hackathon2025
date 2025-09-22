@@ -1,10 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ChatList from '../../components/chatList/chatList';
 import Header from '../../components/Layout/header';
+import ChatList from '../../components/chatList/chatList';
+import { chatsData } from '../../data/conversationData';
 import './chatPage.css';
 
-const chatsData = [
+/*const chatsData = [
     {
         id: 1,
         name: 'Ana la Apicultora',
@@ -40,7 +41,7 @@ const chatsData = [
         timestamp: 'Ahora',
         initial: 'P',
     },
-];
+];*/
 
 const ChatPage = () => {
     const navigate = useNavigate();

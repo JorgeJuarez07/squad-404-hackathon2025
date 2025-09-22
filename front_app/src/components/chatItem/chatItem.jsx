@@ -6,7 +6,7 @@ const ChatItem = ({ id, initial, name, message, timestamp }) => {
     const navigate = useNavigate(); 
 
     const handleChatClick = () => {
-        navigate(`/chat/${id}`);
+        navigate(`/chats/${id}`);
     };
 
     return (
