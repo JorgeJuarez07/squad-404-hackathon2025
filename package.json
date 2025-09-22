@@ -29,6 +29,8 @@
   "homepage": "https://github.com/JorgeJuarez07/squad-404-hackathon2025#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
   }
 }
-

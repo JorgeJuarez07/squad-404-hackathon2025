@@ -4,16 +4,16 @@ import NavigationBar from '../../components/NavigationBar/NavigationBar';
 import './ShoppingCartPage.css';
 
 const initialCartItems = [
-  { id: 1, name: 'Tomates Frescos', price: 200.50, quantity: 2, sellerWallet: "https://ilp.interledger-test.dev/vsdsd", image: 'https://via.placeholder.com/150' },
-  { id: 2, name: 'Lechuga Romana', price: 10000.20, quantity: 1, sellerWallet: "https://ilp.interledger-test.dev/csdds", image: 'https://via.placeholder.com/150' },
-  { id: 3, name: 'Zanahorias Orgánicas', price: 342355.00, quantity: 3, sellerWallet: "https://ilp.interledger-test.dev/sdcdscsd", image: 'https://via.placeholder.com/150' },
+  { id: 1, name: 'Tomates Frescos', price: 200.50, quantity: 2, sellerWallet: "https://ilp.interledger-test.dev/vsdsd", image: 'https://imag.bonviveur.com/racimos-de-tomates-frescos-vendidos-como-verdura.webp' },
+  { id: 2, name: 'Lechuga Romana', price: 10000.20, quantity: 1, sellerWallet: "https://ilp.interledger-test.dev/csdds", image: 'https://www.totenu.com/wp-content/uploads/lechuga-romana-TotEnU-1080x675.jpg' },
+  { id: 3, name: 'Tractor', price: 342355.00, quantity: 3, sellerWallet: "https://ilp.interledger-test.dev/sdcdscsd", image: 'https://www.tractorpool.com.mx/media/4554/8384554/59118154/1757328616.jpg?width=240&height=180&crop=1' },
 ];
 
 const ShoppingCartPage = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
   const [buyerWallet, setBuyerWallet] = useState("");
-  const [redirects, setRedirects] = useState([]); // transacciones pendientes
-  const [completedPayments, setCompletedPayments] = useState([]); // pagos completados
+  const [redirects, setRedirects] = useState([]); 
+  const [completedPayments, setCompletedPayments] = useState([]); 
 
   const handleIncrease = (id) =>
     setCartItems(cartItems.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
@@ -48,7 +48,6 @@ const ShoppingCartPage = () => {
     );
   };
 
-  // Checkout: genera redirecciones y guarda en el estado
   const handleCheckout = async () => {
     let walletInput = buyerWallet;
 
@@ -64,42 +63,75 @@ const ShoppingCartPage = () => {
 
     const amountsPerSeller = calculateAmountsPerSeller(2);
 
+    // --- LÓGICA PARA AÑADIR EL TOKEN MANUALMENTE ---
+    const token = localStorage.getItem('accessToken');
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      alert("No se encontró token de autenticación. Por favor, inicia sesión.");
+      return;
+    }
+    // --- FIN DE LA LÓGICA ---
+
     try {
       const response = await fetch("http://localhost:8673/api/pay", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers, // Usamos las cabeceras con el token
         body: JSON.stringify({ cartItems, amountsPerSeller, buyerWallet: walletInput }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error en la petición de pago');
+      }
 
       const data = await response.json();
       console.log("Pago iniciado:", data);
 
       if (data.redirects) {
-        setRedirects(data.redirects); // guarda todo el objeto de cada transacción
+        setRedirects(data.redirects);
       } else {
         alert("No se generaron redirecciones.");
       }
     } catch (error) {
       console.error("Error en checkout:", error);
-      alert("Ocurrió un error al procesar el pago.");
+      alert(`Ocurrió un error al procesar el pago: ${error.message}`);
     }
   };
 
-  // Finalizar pago: solo envía redirect + nonce
   const finalizePayment = async (transaction) => {
+    // --- LÓGICA PARA AÑADIR EL TOKEN MANUALMENTE ---
+    const token = localStorage.getItem('accessToken');
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      alert("No se encontró token de autenticación. Por favor, inicia sesión.");
+      return;
+    }
+    // --- FIN DE LA LÓGICA ---
+
     try {
       const response = await fetch("http://localhost:8673/api/pay/finalize", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers, // Usamos las cabeceras con el token
         body: JSON.stringify({
-  senderWallet: transaction.senderWallet,   // ahora trae solo lo necesario
-  outgoingGrant: transaction.outgoingGrant,
-  quote: transaction.quote,
-  buyerWallet: buyerWallet
-}),
-
-
+          senderWallet: transaction.senderWallet,
+          outgoingGrant: transaction.outgoingGrant,
+          quote: transaction.quote,
+          buyerWallet: buyerWallet
+        }),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al finalizar el pago');
+      }
 
       const result = await response.json();
       if (result.success) {
@@ -112,10 +144,9 @@ const ShoppingCartPage = () => {
       }
     } catch (err) {
       console.error("Error finalizando pago:", err);
-      alert("Error al finalizar el pago, revisa la consola.");
+      alert(`Error al finalizar el pago: ${err.message}`);
     }
   };
-
 
   return (
     <>

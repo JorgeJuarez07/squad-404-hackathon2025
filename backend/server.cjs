@@ -24,15 +24,108 @@ const ZITADEL_CLIENT_SECRET = "GImJzgaLTayTNyRCibLuojxRCKmdacaeYDHntC8JUXjqlrOPF
 const ZITADEL_ISSUER = "https://interle-jy3ptw.us1.zitadel.cloud";
 const ZITADEL_REDIRECT_URI = "http://localhost:3000/callback";
 
+const ZITADEL_SERVICE_ACCOUNT_CLIENT_ID = "servicio"; 
+const ZITADEL_SERVICE_ACCOUNT_CLIENT_SECRET = "RjZs6wRlVtUGnpKVeP3bzQvZA0yyp0z3ceiByyWsKBydOJLig5w4mzIMS464PPNL"; 
 
-// Endpoint para intercambiar code por tokens
+
+let mgmtApiToken = {
+  value: null,
+  expiresAt: 0,
+};
+
+
+  async function getMgmtApiToken() {
+    if (mgmtApiToken.value && mgmtApiToken.expiresAt > Date.now() / 1000 + 60) {
+      return mgmtApiToken.value;
+    }
+
+    console.log("Generando nuevo token para la API de Management (Client Credentials)...");
+
+    try {
+      const response = await axios.post(
+        `${ZITADEL_ISSUER}/oauth/v2/token`,
+        new URLSearchParams({
+          grant_type: "client_credentials",
+          client_id: ZITADEL_SERVICE_ACCOUNT_CLIENT_ID,
+          client_secret: ZITADEL_SERVICE_ACCOUNT_CLIENT_SECRET,
+          scope: `openid urn:zitadel:iam:org:project:id:zitadel:aud`,
+        }),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      );
+
+      const { access_token, expires_in } = response.data;
+
+      mgmtApiToken = {
+        value: access_token,
+        expiresAt: Date.now() / 1000 + expires_in,
+      };
+
+      console.log("Nuevo token de Management API generado exitosamente.");
+      return mgmtApiToken.value;
+
+    } catch (error) {
+      console.error("Error fatal al obtener el token para la API de Management:", error.response?.data || error.message);
+      throw new Error("No se pudo autenticar la cuenta de servicio con ZITADEL.");
+    }
+  }
+
+    app.post("/api/register", async (req, res) => {
+    const { givenName, familyName, userName, email, phone, password } = req.body;
+
+    if (!userName || !email || !password || !givenName || !familyName) {
+      return res.status(400).json({ message: "Faltan campos obligatorios: nombre, apellido, nombre de usuario, email y contraseña." });
+    }
+
+    const zitadelUserData = {
+      userName: userName,
+      profile: { firstName: givenName, lastName: familyName },
+      email: { email, isVerified: true },
+      password: { password },
+    };
+
+    if (phone && phone.trim() !== '') {
+        let formattedPhone = phone.trim();
+        if (!formattedPhone.startsWith('+')) {
+            formattedPhone = `+${formattedPhone}`;
+        }
+        zitadelUserData.phone = { phone: formattedPhone, isVerified: true };
+    }
+
+    try {
+      const token = await getMgmtApiToken();
+
+      const response = await axios.post(
+        `${ZITADEL_ISSUER}/management/v1/users/human`,
+        zitadelUserData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      );
+
+      res.status(201).json({ 
+          success: true, 
+          message: 'Usuario creado exitosamente', 
+          userId: response.data.userId 
+      });
+
+    } catch (error) {
+      console.error("Error al crear usuario en ZITADEL:", error.response?.data || error.message);
+      const errorMessage = error.response?.data?.message || "Ocurrió un error al registrar el usuario.";
+      const errorCode = error.response?.status || 500;
+      res.status(errorCode).json({ success: false, message: errorMessage });
+    }
+  });
+
+
 app.post("/auth/token", async (req, res) => {
   const { code } = req.body;
 
   if (!code) return res.status(400).json({ error: "No code provided" });
 
   try {
-    // Intercambiar el code por tokens
     const response = await axios.post(
       `${ZITADEL_ISSUER}/oauth/v2/token`,
       new URLSearchParams({
@@ -48,8 +141,7 @@ app.post("/auth/token", async (req, res) => {
     const tokens = response.data;
     res.json(tokens);
   } catch (error) {
-    // CORRECCIÓN: Se añade un registro de errores más detallado.
-    // Esto te mostrará en la consola el error exacto que devuelve ZITADEL.
+
     if (error.response) {
       console.error("Detalles del error de ZITADEL:", error.response.data);
     } else {
@@ -58,20 +150,18 @@ app.post("/auth/token", async (req, res) => {
 
     res.status(500).json({
       error: "Token exchange failed",
-      // También se envía el detalle del error en la respuesta para facilitar la depuración
       details: error.response?.data || error.message
     });
   }
 });
 
-// Endpoint protegido para obtener información del usuario
 app.get("/me", async (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: "No token provided" });
 
   try {
     const response = await axios.get(`${ZITADEL_ISSUER}/oidc/v1/userinfo`, {
-      headers: { Authorization: authHeader }, // authHeader debe ser "Bearer <token>"
+      headers: { Authorization: authHeader }, 
     });
     res.json(response.data);
   } catch (error) {
@@ -91,8 +181,9 @@ let client;
   console.log("Cliente Open Payments inicializado.");
 })();
 
-// ---------------------- ENDPOINT DE PAGO ----------------------
 app.post("/api/pay", async (req, res) => {
+  console.log("==> Petición recibida en /api/pay <=="); 
+
   const { buyerWallet, amountsPerSeller } = req.body;
   if (!buyerWallet || !amountsPerSeller) {
     return res.status(400).json({ error: "Se requieren 'buyerWallet' y 'amountsPerSeller'." });
@@ -187,7 +278,6 @@ app.post("/api/pay", async (req, res) => {
   }
 });
 
-// ----------------- ENDPOINT DE FINALIZAR PAGO -----------------
 app.post("/api/pay/finalize", async (req, res) => {
   const { senderWallet, outgoingGrant, quote, buyerWallet } = req.body;
 
@@ -242,14 +332,12 @@ app.get("/finish", (req, res) => {
   res.send("Autorización completada automáticamente");
 });
 
-
-// ---------------------- CALLBACK DE INTERACCIÓN ----------------------
 app.post("/.well-known/pay", (req, res) => {
   console.log("Solicitud automática de grant recibida:", req.body);
   res.json({ interact: { result: "approved" } });
 });
 
-// ---------------------- REDIRECT CALLBACK ----------------------
+
 app.get("/finish", (req, res) => {
   console.log("Redirección de autorización recibida:", req.query);
   res.send("Autorización completada automáticamente");

@@ -29,25 +29,26 @@ const SingupPage  = () => {
     console.log('User Data:', userData);
 
     try {
-      const response = await fetch('https://your-backend-endpoint.com/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: userData,
-      });
 
-      if (response.ok) {
-        alert('Usuario creado con éxito');
+    const response = await fetch('http://localhost:8673/api/register', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
-      } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
-      }
-    } catch (error) {
-      console.error('Error al crear usuario:', error);
-      alert('Hubo un error. Por favor, inténtalo de nuevo.');
+    if (response.ok) {
+      alert('Usuario creado con éxito, favor de validar tu cuenta en tu correo.');
+      navigate('/login'); 
+    } else {
+      const errorData = await response.json();
+      alert(`Error al crear usuario: ${errorData.message}`);
     }
+  } catch (error) {
+    console.error('Error de red o de servidor:', error);
+    alert('No se pudo conectar con el servidor. Por favor, inténtalo de nuevo.');
+  }
   };
 
   return (
