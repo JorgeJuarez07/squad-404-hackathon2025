@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+// src/App.jsx
+import React from 'react';
 import { 
   BrowserRouter as Router, 
   Routes, 
   Route, 
-  Navigate, 
-  useNavigate 
+  Navigate
 } from "react-router-dom";
 
+import { AuthProvider} from './context/AuthContext'; // Importamos
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
@@ -17,65 +18,41 @@ import ProfileEdit from "./pages/profile/ProfileEdit";
 import Products from './pages/products/Products';
 import ShoppingCartPage from './pages/ShoppingCart/ShoppingCartPage';
 
-const App = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('tokens');
-    navigate('/login');
-  };
-
-  useEffect(() => {
-    const syncLogout = (event) => {
-      if (event.key === 'tokens' && !event.newValue) {
-        console.log('Token borrado. Forzando cierre de sesión.');
-        navigate('/login');
-      }
-    };
-
-    window.addEventListener('storage', syncLogout);
-
-    return () => {
-      window.removeEventListener('storage', syncLogout);
-    };
-  }, [navigate]);
-  
+// El componente App ahora solo define las rutas, sin lógica interna.
+const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/callback" element={<Callback />} />
       <Route path="/singup" element={<SingUp />} />
       
-
+      {/* Rutas protegidas */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Home />} />
-        {/* Se usa el componente Profile de la carpeta pages */}
-        <Route 
-          path="/profile" 
-          element={<Profile logout={handleLogout} />} 
-        />
-        {/* Se corrige la ruta duplicada /singup */}
+        {/* Ya no necesitas pasar 'logout' como prop */}
+        <Route path="/profile" element={<Profile />} />
         <Route path="/profile-edit" element={<ProfileEdit />} />
-        {/* Se puede dejar esta ruta para ver perfiles de otros usuarios */}
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/cart" element={<ShoppingCartPage />} />
-        <Route 
-  path="/products" 
-  element={<Products logout={handleLogout} />} 
-/>
-
-
+        <Route path="/products" element={<Products />} />
       </Route>
+
+      {/* Redirección para cualquier ruta no encontrada */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };
 
-const AppWrapper = () => (
-  <Router>
-    <App />
-  </Router>
-);
 
-export default AppWrapper;
+// El componente principal envuelve todo en los proveedores necesarios.
+const App = () => {
+  return (
+    <Router>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </Router>
+  );
+};
+
+export default App;

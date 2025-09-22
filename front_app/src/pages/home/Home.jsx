@@ -7,7 +7,7 @@ import Profile from "../../components/Profile/Profile";
 
 const Home = () => {
   const [user, setUser] = useState(null);
-  const [currentView, setCurrentView] = useState('products');
+  const [currentView] = useState('products');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,10 +48,7 @@ axios
 
   const onProfileClick = (e) => {navigate('/profile')};
 
-  const onProductsClick = (e) => {
-    e.preventDefault();
-    setCurrentView('products');
-  };
+
   
   let content;
   if (currentView === 'products') {

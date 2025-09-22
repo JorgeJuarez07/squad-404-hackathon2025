@@ -24,8 +24,8 @@ const ZITADEL_CLIENT_SECRET = "GImJzgaLTayTNyRCibLuojxRCKmdacaeYDHntC8JUXjqlrOPF
 const ZITADEL_ISSUER = "https://interle-jy3ptw.us1.zitadel.cloud";
 const ZITADEL_REDIRECT_URI = "http://localhost:3000/callback";
 
-const ZITADEL_SERVICE_ACCOUNT_CLIENT_ID = "servicio"; 
-const ZITADEL_SERVICE_ACCOUNT_CLIENT_SECRET = "RjZs6wRlVtUGnpKVeP3bzQvZA0yyp0z3ceiByyWsKBydOJLig5w4mzIMS464PPNL"; 
+const ZITADEL_SERVICE_ACCOUNT_CLIENT_ID = "servicio";
+const ZITADEL_SERVICE_ACCOUNT_CLIENT_SECRET = "RjZs6wRlVtUGnpKVeP3bzQvZA0yyp0z3ceiByyWsKBydOJLig5w4mzIMS464PPNL";
 
 
 let mgmtApiToken = {
@@ -34,90 +34,90 @@ let mgmtApiToken = {
 };
 
 
-  async function getMgmtApiToken() {
-    if (mgmtApiToken.value && mgmtApiToken.expiresAt > Date.now() / 1000 + 60) {
-      return mgmtApiToken.value;
-    }
-
-    console.log("Generando nuevo token para la API de Management (Client Credentials)...");
-
-    try {
-      const response = await axios.post(
-        `${ZITADEL_ISSUER}/oauth/v2/token`,
-        new URLSearchParams({
-          grant_type: "client_credentials",
-          client_id: ZITADEL_SERVICE_ACCOUNT_CLIENT_ID,
-          client_secret: ZITADEL_SERVICE_ACCOUNT_CLIENT_SECRET,
-          scope: `openid urn:zitadel:iam:org:project:id:zitadel:aud`,
-        }),
-        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-      );
-
-      const { access_token, expires_in } = response.data;
-
-      mgmtApiToken = {
-        value: access_token,
-        expiresAt: Date.now() / 1000 + expires_in,
-      };
-
-      console.log("Nuevo token de Management API generado exitosamente.");
-      return mgmtApiToken.value;
-
-    } catch (error) {
-      console.error("Error fatal al obtener el token para la API de Management:", error.response?.data || error.message);
-      throw new Error("No se pudo autenticar la cuenta de servicio con ZITADEL.");
-    }
+async function getMgmtApiToken() {
+  if (mgmtApiToken.value && mgmtApiToken.expiresAt > Date.now() / 1000 + 60) {
+    return mgmtApiToken.value;
   }
 
-    app.post("/api/register", async (req, res) => {
-    const { givenName, familyName, userName, email, phone, password } = req.body;
+  console.log("Generando nuevo token para la API de Management (Client Credentials)...");
 
-    if (!userName || !email || !password || !givenName || !familyName) {
-      return res.status(400).json({ message: "Faltan campos obligatorios: nombre, apellido, nombre de usuario, email y contraseña." });
-    }
+  try {
+    const response = await axios.post(
+      `${ZITADEL_ISSUER}/oauth/v2/token`,
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: ZITADEL_SERVICE_ACCOUNT_CLIENT_ID,
+        client_secret: ZITADEL_SERVICE_ACCOUNT_CLIENT_SECRET,
+        scope: `openid urn:zitadel:iam:org:project:id:zitadel:aud`,
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
 
-    const zitadelUserData = {
-      userName: userName,
-      profile: { firstName: givenName, lastName: familyName },
-      email: { email, isVerified: true },
-      password: { password },
+    const { access_token, expires_in } = response.data;
+
+    mgmtApiToken = {
+      value: access_token,
+      expiresAt: Date.now() / 1000 + expires_in,
     };
 
-    if (phone && phone.trim() !== '') {
-        let formattedPhone = phone.trim();
-        if (!formattedPhone.startsWith('+')) {
-            formattedPhone = `+${formattedPhone}`;
-        }
-        zitadelUserData.phone = { phone: formattedPhone, isVerified: true };
+    console.log("Nuevo token de Management API generado exitosamente.");
+    return mgmtApiToken.value;
+
+  } catch (error) {
+    console.error("Error fatal al obtener el token para la API de Management:", error.response?.data || error.message);
+    throw new Error("No se pudo autenticar la cuenta de servicio con ZITADEL.");
+  }
+}
+
+app.post("/api/register", async (req, res) => {
+  const { givenName, familyName, userName, email, phone, password } = req.body;
+
+  if (!userName || !email || !password || !givenName || !familyName) {
+    return res.status(400).json({ message: "Faltan campos obligatorios: nombre, apellido, nombre de usuario, email y contraseña." });
+  }
+
+  const zitadelUserData = {
+    userName: userName,
+    profile: { firstName: givenName, lastName: familyName },
+    email: { email, isVerified: true },
+    password: { password },
+  };
+
+  if (phone && phone.trim() !== '') {
+    let formattedPhone = phone.trim();
+    if (!formattedPhone.startsWith('+')) {
+      formattedPhone = `+${formattedPhone}`;
     }
+    zitadelUserData.phone = { phone: formattedPhone, isVerified: true };
+  }
 
-    try {
-      const token = await getMgmtApiToken();
+  try {
+    const token = await getMgmtApiToken();
 
-      const response = await axios.post(
-        `${ZITADEL_ISSUER}/management/v1/users/human`,
-        zitadelUserData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        }
-      );
+    const response = await axios.post(
+      `${ZITADEL_ISSUER}/management/v1/users/human`,
+      zitadelUserData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      }
+    );
 
-      res.status(201).json({ 
-          success: true, 
-          message: 'Usuario creado exitosamente', 
-          userId: response.data.userId 
-      });
+    res.status(201).json({
+      success: true,
+      message: 'Usuario creado exitosamente',
+      userId: response.data.userId
+    });
 
-    } catch (error) {
-      console.error("Error al crear usuario en ZITADEL:", error.response?.data || error.message);
-      const errorMessage = error.response?.data?.message || "Ocurrió un error al registrar el usuario.";
-      const errorCode = error.response?.status || 500;
-      res.status(errorCode).json({ success: false, message: errorMessage });
-    }
-  });
+  } catch (error) {
+    console.error("Error al crear usuario en ZITADEL:", error.response?.data || error.message);
+    const errorMessage = error.response?.data?.message || "Ocurrió un error al registrar el usuario.";
+    const errorCode = error.response?.status || 500;
+    res.status(errorCode).json({ success: false, message: errorMessage });
+  }
+});
 
 
 app.post("/auth/token", async (req, res) => {
@@ -126,6 +126,7 @@ app.post("/auth/token", async (req, res) => {
   if (!code) return res.status(400).json({ error: "No code provided" });
 
   try {
+    // Intercambiar el code por tokens
     const response = await axios.post(
       `${ZITADEL_ISSUER}/oauth/v2/token`,
       new URLSearchParams({
@@ -141,17 +142,8 @@ app.post("/auth/token", async (req, res) => {
     const tokens = response.data;
     res.json(tokens);
   } catch (error) {
-
-    if (error.response) {
-      console.error("Detalles del error de ZITADEL:", error.response.data);
-    } else {
-      console.error("Mensaje de error:", error.message);
-    }
-
-    res.status(500).json({
-      error: "Token exchange failed",
-      details: error.response?.data || error.message
-    });
+    console.error(error.response?.data || error.message);
+    res.status(500).json({ error: "Token exchange failed" });
   }
 });
 
@@ -161,7 +153,7 @@ app.get("/me", async (req, res) => {
 
   try {
     const response = await axios.get(`${ZITADEL_ISSUER}/oidc/v1/userinfo`, {
-      headers: { Authorization: authHeader }, 
+      headers: { Authorization: authHeader },
     });
     res.json(response.data);
   } catch (error) {
@@ -182,7 +174,7 @@ let client;
 })();
 
 app.post("/api/pay", async (req, res) => {
-  console.log("==> Petición recibida en /api/pay <=="); 
+  console.log("==> Petición recibida en /api/pay <==");
 
   const { buyerWallet, amountsPerSeller } = req.body;
   if (!buyerWallet || !amountsPerSeller) {
@@ -226,7 +218,7 @@ app.post("/api/pay", async (req, res) => {
           { walletAddress: senderWallet.id, receiver: incomingPayment.id, method: "ilp" }
         );
 
-       
+
         const nonce = crypto.randomUUID();
         const outgoingGrant = await client.grant.request(
           { url: senderWallet.authServer },
@@ -248,7 +240,7 @@ app.post("/api/pay", async (req, res) => {
         );
 
         redirects.push({
-          sellerWallet: sellerWalletUrl, 
+          sellerWallet: sellerWalletUrl,
           senderWallet: {
             id: senderWallet.id,
             resourceServer: senderWallet.resourceServer,
@@ -299,16 +291,16 @@ app.post("/api/pay/finalize", async (req, res) => {
     if (!isFinalizedGrant(finalizedGrant)) {
       return res.json({ success: false, message: "Grant no finalizado correctamente" });
     }
-const outgoingPaymentDetails = await client.outgoingPayment.create(
-  { 
-    url: senderWallet.resourceServer,
-    accessToken: finalizedGrant.access_token.value 
-  },
-  { 
-    walletAddress: senderWallet.id,
-    quoteId: quote.id
-  }
-);
+    const outgoingPaymentDetails = await client.outgoingPayment.create(
+      {
+        url: senderWallet.resourceServer,
+        accessToken: finalizedGrant.access_token.value
+      },
+      {
+        walletAddress: senderWallet.id,
+        quoteId: quote.id
+      }
+    );
 
     res.json({
       success: true,
@@ -324,24 +316,6 @@ const outgoingPaymentDetails = await client.outgoingPayment.create(
 });
 
 
-app.post("/.well-known/pay", (req, res) => {
-  res.json({ interact: { result: "approved" } });
-});
-
-app.get("/finish", (req, res) => {
-  res.send("Autorización completada automáticamente");
-});
-
-app.post("/.well-known/pay", (req, res) => {
-  console.log("Solicitud automática de grant recibida:", req.body);
-  res.json({ interact: { result: "approved" } });
-});
-
-
-app.get("/finish", (req, res) => {
-  console.log("Redirección de autorización recibida:", req.query);
-  res.send("Autorización completada automáticamente");
-});
 
 app.listen(PORT, () =>
   console.log(`Backend running on http://localhost:${PORT}`)

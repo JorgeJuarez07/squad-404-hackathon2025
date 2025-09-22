@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import ShoppingCartItem from '../../components/ShoppingCartItem/ShoppingCartItem';
 import NavigationBar from '../../components/NavigationBar/NavigationBar';
+import fetchWithAuth from '../../api'; // 👈 usamos el wrapper
 import './ShoppingCartPage.css';
 
 const initialCartItems = [
-  { id: 1, name: 'Tomates Frescos', price: 200.50, quantity: 2, sellerWallet: "https://ilp.interledger-test.dev/vsdsd", image: 'https://imag.bonviveur.com/racimos-de-tomates-frescos-vendidos-como-verdura.webp' },
-  { id: 2, name: 'Lechuga Romana', price: 10000.20, quantity: 1, sellerWallet: "https://ilp.interledger-test.dev/csdds", image: 'https://www.totenu.com/wp-content/uploads/lechuga-romana-TotEnU-1080x675.jpg' },
-  { id: 3, name: 'Tractor', price: 342355.00, quantity: 3, sellerWallet: "https://ilp.interledger-test.dev/sdcdscsd", image: 'https://www.tractorpool.com.mx/media/4554/8384554/59118154/1757328616.jpg?width=240&height=180&crop=1' },
+  //{ id: 1, name: 'Tomates Frescos', price: 200.50, quantity: 2, sellerWallet: "https://ilp.interledger-test.dev/vsdsd", image: 'https://imag.bonviveur.com/racimos-de-tomates-frescos-vendidos-como-verdura.webp' },
+  { id: 2, name: 'Lechuga Romana', price: 100.20, quantity: 1, sellerWallet: "https://ilp.interledger-test.dev/1212", image: 'https://www.totenu.com/wp-content/uploads/lechuga-romana-TotEnU-1080x675.jpg' },
+  { id: 3, name: 'Tractor', price: 100000.00, quantity: 3, sellerWallet: "https://ilp.interledger-test.dev/2895de5", image: 'https://www.tractorpool.com.mx/media/4554/8384554/59118154/1757328616.jpg?width=240&height=180&crop=1' },
 ];
 
 const ShoppingCartPage = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
   const [buyerWallet, setBuyerWallet] = useState("");
-  const [redirects, setRedirects] = useState([]); 
-  const [completedPayments, setCompletedPayments] = useState([]); 
+  const [redirects, setRedirects] = useState([]);
+  const [completedPayments, setCompletedPayments] = useState([]);
 
   const handleIncrease = (id) =>
     setCartItems(cartItems.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
@@ -63,23 +64,9 @@ const ShoppingCartPage = () => {
 
     const amountsPerSeller = calculateAmountsPerSeller(2);
 
-    // --- LÓGICA PARA AÑADIR EL TOKEN MANUALMENTE ---
-    const token = localStorage.getItem('accessToken');
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    } else {
-      alert("No se encontró token de autenticación. Por favor, inicia sesión.");
-      return;
-    }
-    // --- FIN DE LA LÓGICA ---
-
     try {
-      const response = await fetch("http://localhost:8673/api/pay", {
+      const response = await fetchWithAuth("/api/pay", {
         method: "POST",
-        headers: headers, // Usamos las cabeceras con el token
         body: JSON.stringify({ cartItems, amountsPerSeller, buyerWallet: walletInput }),
       });
 
@@ -103,23 +90,9 @@ const ShoppingCartPage = () => {
   };
 
   const finalizePayment = async (transaction) => {
-    // --- LÓGICA PARA AÑADIR EL TOKEN MANUALMENTE ---
-    const token = localStorage.getItem('accessToken');
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    } else {
-      alert("No se encontró token de autenticación. Por favor, inicia sesión.");
-      return;
-    }
-    // --- FIN DE LA LÓGICA ---
-
     try {
-      const response = await fetch("http://localhost:8673/api/pay/finalize", {
+      const response = await fetchWithAuth("/api/pay/finalize", {
         method: "POST",
-        headers: headers, // Usamos las cabeceras con el token
         body: JSON.stringify({
           senderWallet: transaction.senderWallet,
           outgoingGrant: transaction.outgoingGrant,
@@ -127,7 +100,7 @@ const ShoppingCartPage = () => {
           buyerWallet: buyerWallet
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Error al finalizar el pago');
