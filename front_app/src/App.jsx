@@ -4,27 +4,60 @@ import {
   BrowserRouter as Router, 
   Routes, 
   Route, 
-  Navigate
+  Navigate 
 } from "react-router-dom";
 
-import { AuthProvider} from './context/AuthContext'; // Importamos
+// Proveedor de contexto para manejar la autenticación en toda la app
+import { AuthProvider } from './context/AuthContext'; 
+
+// Componente para proteger rutas que requieren inicio de sesión
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+
+// Importación de todas las páginas
 import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Callback from "./pages/login/Callback";
-import SingUp from "./pages/singup/Singup"
+import SingUp from "./pages/singup/Singup";
+import Profile from "./pages/profile/Profile";
+import ProfileEdit from "./pages/profile/ProfileEdit";
+import Products from './pages/products/Products';
+import ShoppingCartPage from './pages/ShoppingCart/ShoppingCartPage';
 
+// Componente que define todas las rutas de la aplicación
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* --- Rutas Públicas --- */}
+      {/* Cualquiera puede acceder a estas rutas */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/callback" element={<Callback />} />
+      <Route path="/singup" element={<SingUp />} />
+      
+      {/* --- Rutas Protegidas --- */}
+      {/* Solo los usuarios autenticados pueden acceder a estas rutas */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile-edit" element={<ProfileEdit />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/cart" element={<ShoppingCartPage />} />
+      </Route>
+
+      {/* --- Redirección --- */}
+      {/* Si un usuario intenta acceder a una ruta que no existe, se le redirige a la página principal */}
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
+
+// Componente principal que envuelve la aplicación con el Router y el AuthProvider
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/callback" element={<Callback />} />
-        <Route path="/singup" element={<SingUp to="/" />} />
-        <Route path="*" element={<Navigate to="/" />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </Router>
   );
 };
