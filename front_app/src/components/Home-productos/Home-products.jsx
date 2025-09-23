@@ -1,31 +1,40 @@
+// src/components/Products/Products.js
 
+import React from 'react';
 import NavigationBar from '../NavigationBar/NavigationBar'; 
+import { useProducts } from '../../Hooks/useProducts';
+import './Products.css';
 
-import './Products.css'; // Te recomiendo crear un CSS para la página
+const Products = ({ logout, onProfileClick }) => {
+  const { products, loading, error } = useProducts();
 
-// Datos de los productos
-const productsData = [
-  { id: 1, name: 'Tomates Orgánicos', description: 'Cosecha fresca del día, perfectos para ensaladas y salsas.', delivery: 'Envío a domicilio' },
-  { id: 2, name: 'Aguacates Hass', description: 'Aguacates cremosos, listos para un delicioso guacamole.', delivery: 'Recoger en tienda' },
-  { id: 3, name: 'Fresas Frescas', description: 'Fresas dulces y jugosas, cultivadas con métodos tradicionales.', delivery: 'Envío a domicilio' },
-  { id: 4, name: 'Maíz Orgánico', description: 'Mazorcas de maíz tierno, ideales para asar o hervir.', delivery: 'Recoger en tienda' },
-  // ... más productos si quieres
-];
+  if (loading) {
+    return (
+      <div>
+        <NavigationBar logout={logout} onProfileClick={onProfileClick} />
+        <p className="loading-message">Cargando productos...</p>
+      </div>
+    );
+  }
 
-const Products = ({ user, logout, onProfileClick }) => {
-
+  if (error) {
+    return (
+      <div>
+        <NavigationBar logout={logout} onProfileClick={onProfileClick} />
+        <p className="error-message">Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="products-page-container">
-      {/* 2. Usamos el componente NavigationBar y le pasamos las props */}
       <NavigationBar logout={logout} onProfileClick={onProfileClick} />
       
-
       <h2 className="products-main-title">Productos Disponibles</h2>
       <p className="products-subtitle">Del campo a tu hogar. Frescura y calidad en cada cosecha.</p>
       
       <div className="products-grid">
-        {productsData.map(product => (
+        {products.map(product => (
           <div key={product.id} className="product-card">
             <div className={`product-tag ${product.delivery === 'Envío a domicilio' ? 'tag-domicilio' : 'tag-tienda'}`}>
               {product.delivery}

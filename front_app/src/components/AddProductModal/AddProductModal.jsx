@@ -1,7 +1,11 @@
+// src/components/AddProductModal/AddProductModal.jsx
+
 import React, { useState } from 'react';
+import { useCreateProduct } from '../../Hooks/useAddProductModal';
 import './ProductForm.css';
 
-const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
+// El componente ya no necesita la prop 'userId'
+const AddProductModal = ({ isOpen, onClose }) => { 
   const initialState = {
     name: '',
     description: '',
@@ -12,6 +16,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
   };
 
   const [formData, setFormData] = useState(initialState);
+  const { create, loading, error, data } = useCreateProduct();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +30,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const dataToSend = new FormData();
@@ -34,10 +39,20 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
     dataToSend.append('price', formData.price);
     dataToSend.append('unit', formData.unit);
     dataToSend.append('deliveryOption', formData.deliveryOption);
-    dataToSend.append('image', formData.image);
+    
+    // 🔥 La corrección clave: siempre envía el usuario con ID 1
+    dataToSend.append('user', 1);
+    
+    if (formData.image) {
+      dataToSend.append('image', formData.image);
+    }
+    
+    await create(dataToSend);
 
-    onSubmit(dataToSend);
-    setFormData(initialState);
+    if (!error && !loading) {
+      onClose();
+      setFormData(initialState);
+    }
   };
 
   if (!isOpen) return null;
@@ -47,7 +62,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
       <div className="modal-content">
         <button onClick={onClose} className="modal-close">&times;</button>
         <h3 className="modal-title">Nuevo Producto</h3>
-
         <form onSubmit={handleSubmit} className="product-form">
           <div>
             <label htmlFor="name" className="form-label">Nombre del Producto</label>
@@ -61,7 +75,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               required
             />
           </div>
-
           <div>
             <label htmlFor="description" className="form-label">Descripción</label>
             <textarea
@@ -73,7 +86,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               required
             ></textarea>
           </div>
-
           <div>
             <label htmlFor="price" className="form-label">Precio</label>
             <input
@@ -88,7 +100,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               required
             />
           </div>
-
           <div>
             <label htmlFor="unit" className="form-label">Unidad (ej: kg, pieza)</label>
             <input
@@ -101,7 +112,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               required
             />
           </div>
-
           <div>
             <label htmlFor="image" className="form-label">Imagen del producto</label>
             <input
@@ -114,7 +124,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               required
             />
           </div>
-
           {formData.image && (
             <div style={{ marginTop: '1rem' }}>
               <p className="form-label">Vista previa:</p>
@@ -130,7 +139,6 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               />
             </div>
           )}
-
           <div>
             <label htmlFor="deliveryOption" className="form-label">Opción de entrega</label>
             <select
@@ -145,8 +153,10 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               <option value="Recoger en tienda">Recoger en tienda</option>
             </select>
           </div>
-
-          <button type="submit" className="submit-button">Guardar Producto</button>
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? 'Guardando...' : 'Guardar Producto'}
+          </button>
+          {error && <p className="error-message">Error: {error}</p>}
         </form>
       </div>
     </div>

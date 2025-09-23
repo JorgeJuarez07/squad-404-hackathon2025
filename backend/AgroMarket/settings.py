@@ -36,7 +36,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'authentication',
     'drf_spectacular',
+    'corsheaders',
     'products'
+    
 ]
 
 MIDDLEWARE = [
@@ -144,7 +146,14 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:4000",
+#     "http://127.0.0.1:4000",
+# ]
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4000",
-    "http://127.0.0.1:4000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
