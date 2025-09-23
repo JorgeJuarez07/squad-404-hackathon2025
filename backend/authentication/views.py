@@ -5,6 +5,9 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from drf_spectacular.utils import extend_schema
+from django.contrib.auth import get_user_model # <<-- LÍNEA CORREGIDA
+
+User = get_user_model() # <<-- OBTENEMOS EL MODELO DE USUARIO AQUÍ
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -33,3 +36,12 @@ class LoginView(APIView):
                 'message': 'Inicio de sesión exitoso.'
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UserListAPIView(APIView):
+    """
+    Vista para listar todos los usuarios.
+    """
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserRegistrationSerializer(users, many=True)
+        return Response(serializer.data)
