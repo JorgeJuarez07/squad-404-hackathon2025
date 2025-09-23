@@ -139,12 +139,12 @@ const SingupPage  = () => {
 
       <p className="text-center text-white mt-4 text-xs sm:text-sm">
         ¿Ya tienes una cuenta? 
-        <button 
+        <a
           onClick={() => window.location.href = "https://interle-jy3ptw.us1.zitadel.cloud/oauth/v2/authorize?client_id=338010317902660978&response_type=code&scope=openid%20profile%20email&redirect_uri=http://localhost:3000/callback"}
-          className="w-full bg-white text-green-600 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-100 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75"
+          className="w-full bg-grite text-green-600 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-green-100 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-75"
         >
           Login
-        </button>
+        </a>
       </p>
 
       <button

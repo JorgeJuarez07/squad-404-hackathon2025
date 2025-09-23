@@ -84,7 +84,10 @@ button[type="submit"]:hover {
     color: #34d399;  
     
 }
+a{
 
+    color: #34d399;
+}
 
 #backFromSignupButton {
     width: 100%;

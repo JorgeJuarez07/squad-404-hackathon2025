@@ -1,4 +1,3 @@
-
 body {
     font-family: 'Inter', sans-serif;
     position: relative;
@@ -37,7 +36,6 @@ body {
     transition: width 0.3s ease, height 0.3s ease;
 }
 
-
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -50,13 +48,21 @@ button, a {
     border-radius: 9999px;
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
-    margin-right: 2rem;
+    margin: 0; 
 }
 
 button:hover, a:hover {
     transform: scale(1.05);
 }
 
+/* 🔹 Ahora siempre estarán en columna */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem; /* espacio entre botones */
+}
 
 @media screen and (max-width: 768px) {
     #welcome-screen {
@@ -100,11 +106,5 @@ button:hover, a:hover {
     #welcome-screen img {
         width: 8rem;
         height: 8rem;
-    }
-
-    .button-group {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
     }
 }
